@@ -19,7 +19,7 @@
 /* Layout: Seitenleiste mit Ansichten links, Arbeitsfläche rechts; Uni = Blau, KBS = Ocker, überall gleich codiert */
 :root{
   --bg:#f3f4f7; --surface:#ffffff; --surface-2:#eceef3; --ink:#1b1f2a; --muted:#5d6477; --line:#d9dce5;
-  --uni:#3446b8; --uni-soft:#e3e7fb; --kbs:#b8741a; --kbs-soft:#f8ecd9;
+  --uni:#3446b8; --uni-soft:#e3e7fb; --kbs:#b8741a; --kbs-soft:#f8ecd9; --priv:#2f7d4f; --priv-soft:#dff1e5;
   --accent:#1f2b5c;
   --ok:#2c7a4b; --warn:#b26b00; --bad:#b3261e; --bad-soft:#fbe5e3; --warn-soft:#fdf0d9; --ok-soft:#e1f2e7;
   --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
@@ -30,14 +30,14 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#13151c; --surface:#1c1f29; --surface-2:#252935; --ink:#e8eaf1; --muted:#9aa1b4; --line:#323747;
-    --uni:#8f9cf2; --uni-soft:#262c52; --kbs:#e3a952; --kbs-soft:#3b2d17; --accent:#c9d0f5;
+    --uni:#8f9cf2; --uni-soft:#262c52; --kbs:#e3a952; --kbs-soft:#3b2d17; --priv:#74c995; --priv-soft:#1c3427; --accent:#c9d0f5;
     --ok:#6fcf97; --warn:#f0b357; --bad:#f28b82; --bad-soft:#3d2120; --warn-soft:#3a2c14; --ok-soft:#1b3326; --ts:55%; --tl:72%; --tsl:24%;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#13151c; --surface:#1c1f29; --surface-2:#252935; --ink:#e8eaf1; --muted:#9aa1b4; --line:#323747;
-  --uni:#8f9cf2; --uni-soft:#262c52; --kbs:#e3a952; --kbs-soft:#3b2d17; --accent:#c9d0f5;
+  --uni:#8f9cf2; --uni-soft:#262c52; --kbs:#e3a952; --kbs-soft:#3b2d17; --priv:#74c995; --priv-soft:#1c3427; --accent:#c9d0f5;
   --ok:#6fcf97; --warn:#f0b357; --bad:#f28b82; --bad-soft:#3d2120; --warn-soft:#3a2c14; --ok-soft:#1b3326; --ts:55%; --tl:72%; --tsl:24%;
   color-scheme: dark;
 }
@@ -61,7 +61,7 @@ nav a.on{background:var(--accent);color:var(--surface)}
 .side .filter{display:flex;flex-direction:column;gap:6px;padding:0 8px}
 .side .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
 .seg{display:flex;background:var(--surface-2);border-radius:8px;padding:3px;gap:2px}
-.seg button{flex:1;border:0;background:transparent;padding:5px 6px;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:500}
+.seg button{flex:1;white-space:nowrap;border:0;background:transparent;padding:5px 6px;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:500}
 .seg button.on{background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .status{font-size:.78rem;color:var(--muted);padding:0 8px;margin-top:auto}
 main{padding:24px clamp(16px,3vw,36px) 60px;min-width:0}
@@ -93,13 +93,14 @@ main{padding:24px clamp(16px,3vw,36px) 60px;min-width:0}
 .tone{--fg:hsl(var(--h) var(--ts) var(--tl));--sf:hsl(var(--h) var(--ts) var(--tsl))}
 .chip.uni{background:var(--sf,var(--uni-soft));color:var(--fg,var(--uni))}
 .chip.kbs{background:var(--sf,var(--kbs-soft));color:var(--fg,var(--kbs))}
+.chip.privat{background:var(--sf,var(--priv-soft));color:var(--fg,var(--priv))}
 .chip.bad{background:var(--bad-soft);color:var(--bad)}
 .chip.warn{background:var(--warn-soft);color:var(--warn)}
 .chip.ok{background:var(--ok-soft);color:var(--ok)}
 .chip.neutral{background:var(--surface-2);color:var(--muted)}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
 .stripe{width:4px;border-radius:4px;align-self:stretch}
-.stripe.uni{background:var(--fg,var(--uni))} .stripe.kbs{background:var(--fg,var(--kbs))}
+.stripe.uni{background:var(--fg,var(--uni))} .stripe.kbs{background:var(--fg,var(--kbs))} .stripe.privat{background:var(--fg,var(--priv))}
 input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);margin:2px 0 0;cursor:pointer}
 .alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
 .alert{display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:var(--r);background:var(--warn-soft);color:var(--ink);border:1px solid var(--line)}
@@ -120,6 +121,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);margin:2p
 .ev{border-radius:7px;padding:5px 7px;font-size:.8rem;cursor:pointer;border-left:3px solid;overflow-wrap:anywhere}
 .ev.uni{background:var(--sf,var(--uni-soft));border-color:var(--fg,var(--uni))}
 .ev.kbs{background:var(--sf,var(--kbs-soft));border-color:var(--fg,var(--kbs))}
+.ev.privat{background:var(--sf,var(--priv-soft));border-color:var(--fg,var(--priv))}
 .ev.exam{background:var(--bad-soft);border-color:var(--bad);font-weight:600}
 .ev.task{background:var(--surface-2);border-color:var(--muted)}
 .ev.cancel{opacity:.5;text-decoration:line-through}
@@ -133,8 +135,9 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);margin:2p
 .mc.today{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
 .mc.free{background:var(--surface-2)}
 .mc .n{font-size:.78rem;font-weight:600}
-.mc .e{font-size:.7rem;border-radius:4px;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mc .e.uni{background:var(--sf,var(--uni-soft));color:var(--fg,var(--uni))} .mc .e.kbs{background:var(--sf,var(--kbs-soft));color:var(--fg,var(--kbs))} .mc .e.exam{background:var(--bad-soft);color:var(--bad);font-weight:600} .mc .e.task{background:var(--surface-2);color:var(--muted)}
+.mc .e{font-size:.7rem;border-radius:4px;padding:1px 4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25;overflow-wrap:anywhere}
+.mc .e.cancel{opacity:.5;text-decoration:line-through}
+.mc .e.uni{background:var(--sf,var(--uni-soft));color:var(--fg,var(--uni))} .mc .e.kbs{background:var(--sf,var(--kbs-soft));color:var(--fg,var(--kbs))} .mc .e.privat{background:var(--sf,var(--priv-soft));color:var(--fg,var(--priv))} .mc .e.exam{background:var(--bad-soft);color:var(--bad);font-weight:600} .mc .e.task{background:var(--surface-2);color:var(--muted)}
 .year{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .ym h3{margin-bottom:6px}
 .ym .g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
@@ -157,7 +160,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);margin:2p
 .step.done{background:var(--ok-soft);color:var(--ok);border-color:transparent}
 /* Klassen */
 .ctxcard{cursor:pointer;display:flex;flex-direction:column;gap:8px;border-top:4px solid var(--line)}
-.ctxcard.uni{border-top-color:var(--fg,var(--uni))} .ctxcard.kbs{border-top-color:var(--fg,var(--kbs))}
+.ctxcard.uni{border-top-color:var(--fg,var(--uni))} .ctxcard.kbs{border-top-color:var(--fg,var(--kbs))} .ctxcard.privat{border-top-color:var(--fg,var(--priv))}
 .ctxcard:hover{border-color:var(--muted)}
 .stats{display:flex;gap:16px;font-size:.82rem;color:var(--muted)}
 .stats b{display:block;font-family:var(--font-display);font-size:1.25rem;color:var(--ink)}
@@ -191,6 +194,46 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);margin:2p
 textarea.inp{width:100%;min-height:90px;resize:vertical}
 .cpage{display:grid;grid-template-columns:minmax(0,3fr) minmax(260px,1fr);gap:16px;align-items:start}
 @media (max-width:1000px){.cpage{grid-template-columns:1fr}}
+/* Ferien-Balken */
+.band{font-size:.72rem;font-weight:600;color:var(--muted);height:16px;line-height:16px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:repeating-linear-gradient(135deg,var(--surface-2),var(--surface-2) 5px,var(--line) 5px,var(--line) 7px)}
+.band.pruef{background:repeating-linear-gradient(135deg,var(--bad-soft),var(--bad-soft) 5px,transparent 5px,transparent 7px);color:var(--bad)}
+.mc .band{margin:-4px -8px 2px;padding-left:8px}
+.mc .band.bs{margin-left:-6px;border-radius:4px 0 0 4px;padding-left:5px}
+.mc .band.be{margin-right:-6px;border-radius:0 4px 4px 0}
+.wkband{border-radius:6px;height:22px;line-height:22px;font-size:.8rem;margin:6px 0 0}
+.wkday.free{background:linear-gradient(var(--surface),var(--surface)) padding-box,repeating-linear-gradient(135deg,var(--line),var(--line) 4px,transparent 4px,transparent 8px) border-box;border:2px solid transparent}
+.day .band{margin:0 -10px;border-radius:0}
+/* Jahr */
+.yls{position:absolute;top:2px;right:2px;display:flex;gap:1px}
+.yl{display:inline-block;width:4px;height:4px;border-radius:50%}
+.yl.u{background:var(--uni)} .yl.k{background:var(--kbs)} .yl.p{background:var(--priv)}
+/* Ausführliche Woche */
+.wk{display:flex;flex-direction:column;gap:10px}
+.wkday{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.wkday.today{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent)}
+.wkday.empty{padding:8px 14px;opacity:.75}
+.wk.wkbig .wkday.empty{opacity:1}
+.wk.wkbig .wkitems{grid-template-columns:1fr}
+.wk.wkbig .lesson{padding:14px 16px}
+.wk.wkbig .lesson .ltopic{font-size:1.1rem}
+.wk.wkbig .lesson .lnotes{font-size:.95rem}
+.wkdh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wkdh b{font-family:var(--font-display);font-size:1.05rem}
+.wkdh span{color:var(--muted)}
+.wkitems{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;margin-top:10px}
+.lesson{border-radius:9px;padding:10px 12px;background:var(--sf,var(--surface-2));border-left:4px solid var(--fg,var(--muted));display:flex;flex-direction:column;gap:6px;min-width:0}
+.lesson.plain{background:var(--surface-2);border-left-color:var(--muted)}
+.lesson.cancel{opacity:.55}
+.lesson .lh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lesson .tm{font-weight:600;font-size:.85rem}
+.lesson .lm{font-size:.8rem;color:var(--muted)}
+.lesson .ltopic{font-weight:600;font-size:.95rem}
+.lesson .lnotes{white-space:pre-wrap;font-size:.86rem;line-height:1.45;overflow-wrap:anywhere}
+.lesson .lsec{border-top:1px solid var(--line);padding-top:6px}
+.lrow{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.86rem;flex-wrap:wrap}
+.lrow .t{overflow-wrap:anywhere}
+.lrow.done .t{text-decoration:line-through;color:var(--muted)}
 /* Modal */
 .ov{position:fixed;inset:0;background:rgba(10,12,20,.45);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;z-index:10;overflow:auto}
 .modal{background:var(--surface);border-radius:14px;width:min(560px,100%);padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:14px}
@@ -236,6 +279,7 @@ textarea.inp{width:100%;min-height:90px;resize:vertical}
         <button type="button" data-a="all">Alle</button>
         <button type="button" data-a="uni">Uni</button>
         <button type="button" data-a="kbs">KBS</button>
+        <button type="button" data-a="privat">Privat</button>
       </div>
     </div>
     <div class="status" id="status">Daten werden geladen …</div>
@@ -303,7 +347,9 @@ async function initData(){
   try { if(navigator.storage?.persist) S.persisted = await navigator.storage.persist(); } catch {}
   try { for(const it of await idb.all("items")) RAW.set(it.id, it); S.mode = "ready"; }
   catch { S.mode = "error"; }
-  rebuild(); renderAll(); sync();
+  rebuild();
+  if(S.mode === "ready" && !RAW.has("ctx-privat")) await save({ id: "ctx-privat", kind: "ctx", name: "Privat", short: "Privat", area: "privat", shade: "0", info: "", created: Date.now() });
+  renderAll(); sync();
 }
 async function save(item){
   const it = JSON.parse(JSON.stringify({ ...item, updated: Date.now(), dirty: true, deleted: false }));
@@ -464,7 +510,9 @@ async function importData(file){
   } catch { toast("Diese Datei ist kein Planer-Export."); }
 }
 const UNI_H = [228,205,252,190,268,214], KBS_H = [28,42,12,50,2,35], TOP_H = [150,285,335,175,95,305,55,200];
-const hueOf = item => { const c = item?.kind === "ctx" ? item : ctxOf(item); if(!c) return areaOf(item) === "kbs" ? 28 : 228; const a = c.area === "kbs" ? KBS_H : UNI_H; return a[(Number(c.shade)||0) % a.length]; };
+const PRIV_H = [145,165,125,180,100,155];
+const AREA_LABEL = { kbs: "KBS", uni: "Uni", privat: "Privat" };
+const hueOf = item => { const c = item?.kind === "ctx" ? item : ctxOf(item); if(!c){ const ar = areaOf(item); return ar === "kbs" ? 28 : ar === "privat" ? 145 : 228; } const a = c.area === "kbs" ? KBS_H : c.area === "privat" ? PRIV_H : UNI_H; return a[(Number(c.shade)||0) % a.length]; };
 const tAttr = item => ` style="--h:${hueOf(item)}"`;
 const topicHue = t => TOP_H[(Number(t.shade)||0) % TOP_H.length];
 
@@ -524,10 +572,10 @@ function reminders(){
 }
 
 /* ---------- Schemas für Formulare ---------- */
-const ctxOptions = () => [["", "– ohne –"], ...all("ctx").sort((a,b)=>(a.area+a.name).localeCompare(b.area+b.name)).map(c => [c.id, `${c.area === "kbs" ? "KBS" : "Uni"} · ${c.name}`])];
+const ctxOptions = () => [["", "– ohne –"], ...all("ctx").sort((a,b)=>(a.area+a.name).localeCompare(b.area+b.name)).map(c => [c.id, `${AREA_LABEL[c.area] || "Uni"} · ${c.name}`])];
 const SCHEMA = {
   ctx: { label: "Klasse / Kurs", fields: [
-    ["name","Name","text","full"], ["area","Bereich","select",null,[["kbs","KBS (Unterricht)"],["uni","Uni (Studium)"]]], ["short","Kürzel","text"], ["shade","Farbton","select",null,[["0","Ton 1"],["1","Ton 2"],["2","Ton 3"],["3","Ton 4"],["4","Ton 5"],["5","Ton 6"]]],
+    ["name","Name","text","full"], ["area","Bereich","select",null,[["kbs","KBS (Unterricht)"],["uni","Uni (Studium)"],["privat","Privat / Organisatorisches"]]], ["short","Kürzel","text"], ["shade","Farbton","select",null,[["0","Ton 1"],["1","Ton 2"],["2","Ton 3"],["3","Ton 4"],["4","Ton 5"],["5","Ton 6"]]],
     ["teamsUrl","Teams-Link (Team oder Kanal)","url","full"], ["onenoteUrl","OneNote-/Moodle-Link","url","full"], ["notes","Kurzbeschreibung (Lehrmittel, Raum …)","textarea","full"] ] },
   event: { label: "Termin / Lektion", fields: [
     ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["date","Datum (erstes)","date"], ["repeat","Wiederholung","select",null,[["none","einmalig"],["weekly","jede Woche"],["biweekly","alle 2 Wochen"]]],
@@ -535,15 +583,15 @@ const SCHEMA = {
     ["skipHolidays","In Ferien / freien Zeiten automatisch auslassen","checkbox","full"], ["notes","Notizen","textarea","full"] ] },
   task: { label: "Aufgabe / Auftrag", fields: [
     ["title","Was ist zu tun?","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["due","Fällig am","date"], ["day","Geplant am (Tag im Jahresplan)","date"], ["remind","Erinnern","select",null,[["","nicht"],["0","am Tag selbst"],["1","1 Tag vorher"],["3","3 Tage vorher"],["7","1 Woche vorher"],["14","2 Wochen vorher"]]],
-    ["prio","Priorität","select",null,[["normal","normal"],["hoch","hoch"],["tief","tief"]]], ["forClass","Auftrag für die Klasse (für Teams)","checkbox"],
+    ["prio","Priorität","select",null,[["normal","normal"],["hoch","hoch"],["tief","tief"]]], ["forClass","Auftrag an die SuS (z. B. Hausaufgabe): bekommt den Knopf «→ Teams» zum Kopieren","checkbox","full"],
     ["url","Link (Teams, Moodle, Dokument)","url","full"], ["notes","Beschreibung","textarea","full"], ["done","Erledigt","checkbox","full"] ] },
   exam: { label: "Prüfung", fields: [
     ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["date","Datum","date"], ["time","Zeit","time"],
     ["remind","Erinnern ab","select",null,[["7","1 Woche vorher"],["3","3 Tage vorher"],["14","2 Wochen vorher"],["21","3 Wochen vorher"],["1","1 Tag vorher"]]], ["topic","Thema / Stoff","text"],
     ["notes","Notizen","textarea","full"] ] },
   student: { label: "Schüler:in", fields: [ ["name","Name","text","full"], ["ctx","Klasse","ctx","full"], ["notes","Notizen (Lernstand, Absprachen …)","textarea","full"] ] },
-  doc: { label: "Dokument / Link", fields: [ ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["url","Link (z. B. Teams- oder OneDrive-Datei)","url","full"], ["day","Abgelegt am (Tag im Jahresplan)","date"], ["tag","Art","select",null,[["Material","Material"],["Prüfung","Prüfung"],["Lösung","Lösung"],["Auftrag","Auftrag"],["Uni","Uni-Unterlage"],["Sonstiges","Sonstiges"]]], ["notes","Notizen","textarea","full"] ] },
-  topic: { label: "Themenblock", fields: [ ["title","Thema (z. B. Quadratische Gleichungen)","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["start","Von","date"], ["end","Bis","date"], ["notes","Lernziele / Notizen","textarea","full"] ] },
+  doc: { label: "Dokument / Link", fields: [ ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["url","Link (z. B. Teams- oder OneDrive-Datei)","url","full"], ["day","Abgelegt am (Tag im Jahresplan)","date"], ["onTeams","Auf Teams hochgeladen","checkbox"], ["tag","Art","select",null,[["Material","Material"],["Prüfung","Prüfung"],["Lösung","Lösung"],["Auftrag","Auftrag"],["Uni","Uni-Unterlage"],["Sonstiges","Sonstiges"]]], ["notes","Notizen","textarea","full"] ] },
+  topic: { label: "Themenblock", fields: [ ["title","Thema (z. B. Quadratische Gleichungen)","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["ev","Gilt für","evsel","full"], ["start","Von","date"], ["end","Bis","date"], ["notes","Lernziele / Notizen","textarea","full"] ] },
   period: { label: "Zeitraum", fields: [ ["title","Titel (z. B. Herbstferien)","text","full"], ["type","Art","select",null,[["semester","Semester / Schuljahr"],["frei","Ferien / unterrichtsfrei"],["pruef","Prüfungsphase"],["sonst","Sonstiges"]]], ["area","Gilt für","select",null,[["beide","Uni und KBS"],["uni","Uni"],["kbs","KBS"]]], ["start","Von","date"], ["end","Bis","date"] ] }
 };
 const EXAM_STEPS = {
@@ -573,6 +621,7 @@ function openForm(kind, item = {}, opts = {}){
     const fid = `f-${k}`;
     if(t === "checkbox") return `<label class="cb ${cls||""}"><input type="checkbox" id="${fid}" name="${k}" ${v ? "checked" : ""}> ${esc(l)}</label>`;
     if(t === "textarea") return `<label${c}>${esc(l)}<textarea id="${fid}" name="${k}">${esc(v)}</textarea></label>`;
+    if(t === "evsel") return `<label${c}>${esc(l)}<select id="${fid}" name="${k}" data-evsel="1">${evOptions(it.ctx, v)}</select></label>`;
     if(t === "select" || t === "ctx"){ const o = t === "ctx" ? ctxOptions() : opt; return `<label${c}>${esc(l)}<select id="${fid}" name="${k}">${o.map(([a,b]) => `<option value="${esc(a)}" ${String(v)===String(a)?"selected":""}>${esc(b)}</option>`).join("")}</select></label>`; }
     return `<label${c}>${esc(l)}<input id="${fid}" name="${k}" type="${t}" value="${esc(v)}" ${k==="title"||k==="name"?"required":""}></label>`;
   };
@@ -594,6 +643,8 @@ function openForm(kind, item = {}, opts = {}){
     else { del.dataset.sure = 1; del.textContent = "Wirklich löschen?"; }
   };
   opts.onOpen?.(root, it);
+  const evSel = root.querySelector("[data-evsel]"), ctxSel = root.querySelector("#f-ctx");
+  if(evSel && ctxSel) ctxSel.addEventListener("change", () => { evSel.innerHTML = evOptions(ctxSel.value, ""); });
   $("#mform").onsubmit = async e => {
     e.preventDefault();
     const f = e.target;
@@ -618,20 +669,22 @@ function openLesson(occ){
       <label class="full">Thema dieser Stunde<input id="l-topic" name="topic" value="${esc(plan.topic)}" placeholder="z. B. Quadratische Gleichungen: Wurzel ziehen"></label>
       <label class="full">Ablauf / Planung<textarea id="l-notes" name="notes" placeholder="Einstieg, Übungen, Aufträge fürs Selbststudium …">${esc(plan.notes)}</textarea></label>
       <label class="full">Material-Link (Teams, OneNote …)<input id="l-url" name="url" type="url" value="${esc(plan.url)}"></label>
-      <label class="cb full"><input type="checkbox" id="l-cancel" name="cancelled" ${plan.cancelled ? "checked" : ""}> Fällt aus</label>
+      <label class="cb"><input type="checkbox" id="l-ready" name="ready" ${plan.ready ? "checked" : ""}> Stunde fertig vorbereitet</label>
+      <label class="cb"><input type="checkbox" id="l-cancel" name="cancelled" ${plan.cancelled ? "checked" : ""}> Fällt aus</label>
     </div>
-    <div class="foot"><div class="row"><button type="button" class="btn" id="ledit">Ganze Serie bearbeiten</button>${c?.teamsUrl ? `<a class="btn" href="${esc(c.teamsUrl)}" target="_blank" rel="noopener">In Teams öffnen</a>` : ""}</div>
+    <div class="foot"><div class="row"><button type="button" class="btn" id="ledit">Ganze Serie bearbeiten</button>${c ? `<button type="button" class="btn" id="lday">Dokumente & Aufgaben</button>` : ""}${c?.teamsUrl ? `<a class="btn" href="${esc(c.teamsUrl)}" target="_blank" rel="noopener">In Teams öffnen</a>` : ""}</div>
     <div class="row"><button type="button" class="btn" id="lcancel">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div>
   </form></div>`;
   const close = () => { root.innerHTML = ""; S.modal = null; const r = S.returnTo; S.returnTo = null; if(r) r(); };
   $("#lclose").onclick = close; $("#lcancel").onclick = close;
   $(".ov").addEventListener("mousedown", e => { if(e.target.classList.contains("ov")) close(); });
   $("#ledit").onclick = () => { root.innerHTML = ""; openForm("event", ev); };
+  const ld = $("#lday"); if(ld) ld.onclick = () => { root.innerHTML = ""; S.returnTo = null; openDay(c.id, occ.day); };
   $("#lform").onsubmit = async e => {
     e.preventDefault(); const f = e.target;
-    const p = { topic: f.topic.value.trim(), notes: f.notes.value.trim(), url: f.url.value.trim(), cancelled: f.cancelled.checked };
+    const p = { topic: f.topic.value.trim(), notes: f.notes.value.trim(), url: f.url.value.trim(), cancelled: f.cancelled.checked, ready: f.ready.checked };
     const plans = { ...(ev.plans || {}) };
-    if(!p.topic && !p.notes && !p.url && !p.cancelled) delete plans[occ.day]; else plans[occ.day] = p;
+    if(!p.topic && !p.notes && !p.url && !p.cancelled && !p.ready) delete plans[occ.day]; else plans[occ.day] = p;
     close(); await save({ ...ev, plans });
   };
   setTimeout(() => $("#l-topic")?.focus(), 30);
@@ -666,7 +719,7 @@ function taskRow(t){
   return `<div class="li ${t.done ? "done" : ""}">
     <input type="checkbox" data-done="${t.id}" ${t.done ? "checked" : ""} aria-label="Erledigt: ${esc(t.title)}">
     <div class="clickable" data-edit="${t.id}"><div class="t">${t.prio === "hoch" ? "❗ " : ""}${esc(t.title)}</div>
-      <div class="m">${ctxChip(t)}${t.day && !t.done ? `<span class="chip neutral">geplant ${fmtD(t.day)}</span>` : ""}${t.due || !t.day ? dueChip(t.due, t.done) : ""}${t.forClass ? `<span class="chip neutral">Auftrag Klasse</span>` : ""}</div></div>
+      <div class="m">${ctxChip(t)}${t.day && !t.done ? `<span class="chip neutral">geplant ${fmtD(t.day)}</span>` : ""}${t.due || !t.day ? dueChip(t.due, t.done) : ""}${t.forClass ? `<span class="chip neutral">für SuS</span>` : ""}</div></div>
     <div class="row" style="justify-content:flex-end">${t.url ? `<a class="btn small" href="${esc(t.url)}" target="_blank" rel="noopener">Öffnen</a>` : ""}${t.forClass ? `<button type="button" class="btn small" data-copy="${t.id}" title="Auftrag kopieren und Teams öffnen">→ Teams</button>` : ""}</div>
   </div>`;
 }
@@ -693,9 +746,71 @@ function agendaBlock(x){
   return `<div class="ev exam" data-edit="${x.e.id}" tabindex="0">Prüfung: ${esc(x.e.title)}</div>`;
 }
 
+/* ---------- Ausführliche Wochenansicht ---------- */
+const isKbsDoc = d => (ctxOf(d)?.area || "") === "kbs";
+const teamsChip = d => isKbsDoc(d) ? `<button type="button" class="chip ${d.onTeams ? "ok" : "warn"}" style="border:0;cursor:pointer" data-teams="${d.id}" title="Klicken zum Umschalten">${d.onTeams ? "✓ auf Teams" : "noch nicht auf Teams"}</button>` : "";
+function lessonStatus(o, docs, tasks){
+  if(o.cancelled) return { cls: "neutral", text: "fällt aus", open: [] };
+  const open = [];
+  if(areaOf(o.ev) === "kbs" && !o.plan.topic && !o.plan.notes) open.push("Planung fehlt");
+  const nt = docs.filter(d => isKbsDoc(d) && !d.onTeams).length;
+  if(nt) open.push(`${nt} Dok. nicht auf Teams`);
+  const ot = tasks.filter(t => !t.done).length;
+  if(ot) open.push(`${ot} Aufgabe${ot > 1 ? "n" : ""} offen`);
+  if(!open.length && o.plan.ready) return { cls: "ok", text: "✓ vorbereitet", open };
+  if(!open.length) return { cls: "ok", text: "nichts offen", open };
+  return { cls: "warn", text: open.join(" · "), open };
+}
+function lessonCard(o, docs, tasks){
+  const c = ctxOf(o.ev), st = lessonStatus(o, docs, tasks);
+  const time = o.ev.start ? `${o.ev.start}${o.ev.end ? "–" + o.ev.end : ""}` : "";
+  return `<div class="lesson tone ${o.cancelled ? "cancel" : ""}"${tAttr(o.ev)}>
+    <div class="lh">${time ? `<span class="tm">${time}</span>` : ""}<b>${esc(o.ev.title)}</b>${o.ev.location ? `<span class="lm">${esc(o.ev.location)}</span>` : ""}<span class="chip ${st.cls}">${esc(st.text)}</span>
+      <span style="flex:1"></span><button type="button" class="btn small" data-occ="${o.ev.id}|${o.day}">${areaOf(o.ev) !== "kbs" ? "Notizen" : o.plan.topic || o.plan.notes ? "Planung bearbeiten" : "Stunde planen"}</button>${c ? `<button type="button" class="btn small" data-day="${c.id}|${o.day}">+ Dokument / Aufgabe</button>` : ""}</div>
+    ${(() => { const tb = topicForOcc(o); return tb.length ? `<div class="row" style="gap:6px">${tb.map(t => `<button type="button" class="topicchip" style="--th:${topicHue(t)};border:0;cursor:pointer" data-topic="${t.id}">▤ ${esc(t.title)}</button>`).join("")}</div>` : ""; })()}
+    ${o.plan.topic ? `<div class="ltopic">${esc(o.plan.topic)}</div>` : ""}
+    ${o.plan.notes ? `<div class="lnotes">${esc(o.plan.notes)}</div>` : ""}
+    ${o.plan.url ? `<div><a class="btn small" href="${esc(o.plan.url)}" target="_blank" rel="noopener">Material öffnen</a></div>` : ""}
+    ${docs.length ? `<div class="lsec"><div class="section-h">Dokumente</div>${docs.map(d => `<div class="lrow"><span class="t">${esc(d.title)}</span>${teamsChip(d)}<span style="flex:1"></span>${d.assetId ? `<button type="button" class="btn small" data-openf="${d.id}">Öffnen</button>` : d.url ? `<a class="btn small" href="${esc(d.url)}" target="_blank" rel="noopener">Öffnen</a>` : ""}</div>`).join("")}</div>` : ""}
+    ${tasks.length ? `<div class="lsec"><div class="section-h">Aufgaben</div>${tasks.map(t => `<label class="lrow ${t.done ? "done" : ""}"><input type="checkbox" data-done="${t.id}" ${t.done ? "checked" : ""}><span class="t">${esc(t.title)}</span>${t.forClass ? `<span class="chip neutral">für SuS</span>` : ""}${t.due && t.due !== o.day ? dueChip(t.due, t.done) : ""}</label>`).join("")}</div>` : ""}
+  </div>`;
+}
+function vWeekDetail(mon, n = 7, big = false){
+  const today = TODAY(), from = ds(mon), to = ds(addDays(mon, n - 1));
+  const occ = occurrences(from, to);
+  return `<div class="wk ${big ? "wkbig" : ""}">${[...Array(n)].map((_, i) => {
+    const d = addDays(mon, i), s = ds(d);
+    const fr = periodsOn(s).filter(p => p.type === "frei" || p.type === "pruef");
+    const os = occ.filter(o => o.day === s);
+    const usedT = new Set(), usedD = new Set();
+    const cards = os.map(o => {
+      const first = os.find(x => x.ev.ctx === o.ev.ctx) === o;
+      const docs = first && o.ev.ctx ? all("doc").filter(x => x.ctx === o.ev.ctx && x.day === s) : [];
+      const tasks = first && o.ev.ctx ? all("task").filter(t => t.ctx === o.ev.ctx && (t.day === s || (!t.day && t.due === s))) : [];
+      docs.forEach(x => usedD.add(x.id)); tasks.forEach(x => usedT.add(x.id));
+      return lessonCard(o, docs, tasks);
+    }).join("");
+    const restT = visible("task").filter(t => !usedT.has(t.id) && !t.done && (t.day || t.due) === s);
+    const restE = visible("exam").filter(e => e.date === s);
+    const restD = visible("doc").filter(x => !usedD.has(x.id) && x.day === s);
+    const notes = all("note").filter(x => x.day === s && (S.area === "all" || areaOf(x) === S.area));
+    const empty = !os.length && !restT.length && !restE.length && !restD.length && !notes.length;
+    return `<div class="wkday ${s === today ? "today" : ""} ${empty ? "empty" : ""} ${fr.some(p => p.type === "frei") ? "free" : ""}">
+${big ? "" : `      <div class="wkdh"><div class="clickable" data-gotoweek="${s}" title="Tag gross anzeigen"><b>${WDL[d.getDay()]}</b> <span>${d.getDate()}.${d.getMonth()+1}.</span></div><span style="flex:1"></span><button type="button" class="btn small ghost" data-addday="${s}">+ Termin</button></div>`}
+      ${fr.map(p => `<div class="band wkband ${p.type}">${esc(p.title)} · ${fmtD(p.start)} – ${fmtD(p.end)}</div>`).join("")}
+      ${empty ? (big ? `<div class="empty" style="margin-top:8px">${fr.length ? "Unterrichtsfrei." : "Keine Termine, Aufgaben oder Dokumente an diesem Tag."}</div>` : "") : `<div class="wkitems">${cards}
+        ${restE.map(e => `<div class="ev exam" data-edit="${e.id}" tabindex="0">Prüfung: ${esc(e.title)} ${ctxChip(e)}</div>`).join("")}
+        ${restT.length ? `<div class="lesson plain"><div class="section-h">Weitere Aufgaben</div>${restT.map(t => `<label class="lrow"><input type="checkbox" data-done="${t.id}"><span class="t">${esc(t.title)}</span>${ctxChip(t)}</label>`).join("")}</div>` : ""}
+        ${restD.length ? `<div class="lesson plain"><div class="section-h">Weitere Dokumente</div>${restD.map(x => `<div class="lrow"><span class="t">${esc(x.title)}</span>${ctxChip(x)}${teamsChip(x)}</div>`).join("")}</div>` : ""}
+        ${notes.length ? `<div class="lesson plain"><div class="section-h">Notizen</div>${notes.map(x => `<div class="lrow" style="align-items:flex-start"><span class="t" style="white-space:pre-wrap">${esc(x.text)}</span>${ctxChip(x)}</div>`).join("")}</div>` : ""}
+      </div>`}
+    </div>`;
+  }).join("")}</div>`;
+}
+
 /* ---------- Ansichten ---------- */
 const VIEWS = [
-  ["uebersicht","Übersicht"], ["kalender","Kalender"], ["aufgaben","Aufgaben"], ["notizen","Brain Dump"], ["pruefungen","Prüfungen"], ["klassen","Klassen & Kurse"], ["dokumente","Dokumente"], ["jahr","Jahresplan"], ["sync","Sync & Backup"]
+  ["uebersicht","Übersicht"], ["kalender","Kalender"], ["aufgaben","Aufgaben"], ["notizen","Brain Dump"], ["pruefungen","Prüfungen"], ["klassen","Klassen & Kurse"], ["dokumente","Dokumente"], ["sync","Sync & Backup"]
 ];
 function renderNav(){
   const rem = reminders().length;
@@ -713,8 +828,18 @@ function renderStatus(){
   const m = { off: "Nur auf diesem Gerät · Abgleich unter «Sync & Backup» einrichten", offline: `Offline · ${dc ? dc + " Änderung(en) werden später abgeglichen" : "alles gespeichert"}`, busy: "Gleiche ab …", ok: `Abgeglichen ${SYNC.last ? new Date(SYNC.last).toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" }) : ""}${dc ? ` · ${dc} wartend` : ""}`, error: "Abgleich fehlgeschlagen · Details unter «Sync & Backup»" };
   $("#status").textContent = S.mode === "error" ? "Gerätespeicher nicht verfügbar" : (m[SYNC.state] || "");
 }
+const NEW_BY_VIEW = { pruefungen: ["exam", "+ Neue Prüfung"], aufgaben: ["task", "+ Neue Aufgabe"], kalender: ["event", "+ Neuer Termin"], dokumente: ["doc", "+ Neues Dokument"], klassen: ["ctx", "+ Neue Klasse / Kurs"], notizen: ["note", "+ Neue Notiz"], sync: null };
 function pageHead(title, sub, actions = ""){
-  return `<div class="top"><div><h1>${title}</h1>${sub ? `<div class="sub">${sub}</div>` : ""}</div><div class="row">${actions}<button type="button" class="btn primary" data-act="new">+ Neu</button></div></div>`;
+  const nb = S.view in NEW_BY_VIEW ? NEW_BY_VIEW[S.view] : ["menu", "+ Neu"];
+  return `<div class="top"><div><h1>${title}</h1>${sub ? `<div class="sub">${sub}</div>` : ""}</div><div class="row">${actions}${nb ? `<button type="button" class="btn primary" data-act="new" data-newkind="${nb[0]}">${nb[1]}</button>` : ""}</div></div>`;
+}
+function newForView(kind){
+  if(kind === "menu") return newMenu();
+  if(kind === "note"){ const t = $("#dump-t"); if(t){ t.focus(); t.scrollIntoView({ block: "center" }); } return; }
+  if(kind === "doc") return openDocForm({});
+  if(kind === "event") return openForm("event", { ...defaultsFor("event"), date: S.view === "kalender" ? S.calRef : TODAY(), repeat: "none" });
+  if(kind === "exam") return openForm("exam", { ...defaultsFor("exam"), date: "" });
+  openForm(kind, defaultsFor(kind));
 }
 
 function vUebersicht(){
@@ -739,40 +864,53 @@ function vUebersicht(){
     </div>
   </div>
   <div class="card" style="margin-top:16px"><h2>Diese Woche <a class="count" href="#kalender">zum Kalender</a></h2>
-    <div class="week">${[...Array(7)].map((_, i) => { const d = addDays(mon, i), s = ds(d); const items = wk[s] || []; return `<div class="day ${s === today ? "today" : ""}"><div class="dh"><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b></div>${items.map(agendaBlock).join("") || `<span class="empty" style="font-size:.78rem">–</span>`}</div>`; }).join("")}</div>
+    <div class="week">${[...Array(7)].map((_, i) => { const d = addDays(mon, i), s = ds(d); const items = wk[s] || []; const bands = periodsOn(s).filter(p => p.type === "frei" || p.type === "pruef"); return `<div class="day ${s === today ? "today" : ""}"><div class="dh"><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b></div>${bands.map(p => `<div class="band ${p.type}" title="${esc(p.title)}">${esc(p.title)}</div>`).join("")}${items.map(agendaBlock).join("") || `<span class="empty" style="font-size:.78rem">–</span>`}</div>`; }).join("")}</div>
   </div>` +
   `<div class="grid g2" style="margin-top:16px"><div class="card"><h2>Brain Dump <a class="count" href="#notizen">alle Notizen</a></h2>${dumpForm(false)}</div>
-   <div class="card"><h2>Noch einzuordnen <span class="count">${all("note").filter(n => !n.ctx || !n.day).length}</span></h2>${all("note").filter(n => !n.ctx || !n.day).sort((a,b) => (b.created||0)-(a.created||0)).slice(0,3).map(n => `<div class="li" style="grid-template-columns:1fr auto"><div class="txt" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(n.text.length > 160 ? n.text.slice(0,160) + " …" : n.text)}</div><a class="btn small" href="#notizen">Zuordnen</a></div>`).join("") || `<div class="empty">Nichts offen.</div>`}</div></div>`;
+   <div class="card"><h2>Noch einzuordnen <span class="count">${all("note").filter(n => !n.ctx).length}</span></h2>${all("note").filter(n => !n.ctx).sort((a,b) => (b.created||0)-(a.created||0)).slice(0,3).map(n => `<div class="li" style="grid-template-columns:1fr auto"><div class="txt" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(n.text.length > 160 ? n.text.slice(0,160) + " …" : n.text)}</div><a class="btn small" href="#notizen">Zuordnen</a></div>`).join("") || `<div class="empty">Nichts offen.</div>`}</div></div>`;
 }
 
 function vKalender(){
   const ref = pd(S.calRef), today = TODAY();
-  const nav = `<div class="seg" style="width:auto"><button type="button" data-cal="week" class="${S.calMode==="week"?"on":""}">Woche</button><button type="button" data-cal="month" class="${S.calMode==="month"?"on":""}">Monat</button></div>
+  const nav = `<div class="seg" style="width:auto">${[["day","Tag"],["week","Woche"],["month","Monat"],["year","Jahr"]].map(([k,l]) => `<button type="button" data-cal="${k}" class="${S.calMode===k?"on":""}">${l}</button>`).join("")}</div>
     <button type="button" class="btn" data-calnav="-1" aria-label="Zurück">‹</button><button type="button" class="btn" data-calnav="0">Heute</button><button type="button" class="btn" data-calnav="1" aria-label="Weiter">›</button>`;
+  if(S.calMode === "day"){
+    const sub = [ref.getTime() === pd(today).getTime() ? "Heute" : relDays(diffDays(today, S.calRef)).replace(/^./, c => c.toUpperCase()), `KW ${isoWeek(ref)}`, ...periodsOn(S.calRef).map(p => esc(p.title))].join(" · ");
+    return pageHead(fmtDL(S.calRef), sub, nav) + vWeekDetail(ref, 1, true);
+  }
+  if(S.calMode === "year") return vJahr(nav);
   if(S.calMode === "week"){
     const mon = monday(ref); const ag = agenda(ds(mon), ds(addDays(mon, 6)));
-    return pageHead(`KW ${isoWeek(mon)}`, `${fmtD(ds(mon))} – ${fmtD(ds(addDays(mon,6)))} ${mon.getFullYear()} · Klick auf eine Lektion, um die Stunde zu planen`, nav) +
-      `<div class="week">${[...Array(7)].map((_, i) => { const d = addDays(mon, i), s = ds(d); const fr = periodsOn(s).filter(p => p.type === "frei"); return `<div class="day ${s === today ? "today" : ""} ${fr.length ? "free" : ""}"><div class="dh"><span>${WDL[d.getDay()]}</span><b>${d.getDate()}.${d.getMonth()+1}.</b></div>${fr.map(p => `<span class="chip neutral">${esc(p.title)}</span>`).join("")}${(ag[s]||[]).map(agendaBlock).join("")}<button type="button" class="btn small ghost" data-addday="${s}" style="margin-top:auto;align-self:flex-start">+ Termin</button></div>`; }).join("")}</div>`;
+    return pageHead(`KW ${isoWeek(mon)}`, `${fmtD(ds(mon))} – ${fmtD(ds(addDays(mon,6)))} ${mon.getFullYear()} · Thema, Planung, Dokumente und offene Punkte jeder Lektion`, nav) +
+      vWeekDetail(mon);
   }
   const first = new Date(ref.getFullYear(), ref.getMonth(), 1);
   const start = monday(first);
   const ag = agenda(ds(start), ds(addDays(start, 41)));
-  return pageHead(`${MON[ref.getMonth()]} ${ref.getFullYear()}`, "Klick auf einen Tag öffnet die Woche", nav) +
+  return pageHead(`${MON[ref.getMonth()]} ${ref.getFullYear()}`, "Klick auf einen Tag zeigt ihn gross", nav) +
     `<div class="month">${["Mo","Di","Mi","Do","Fr","Sa","So"].map(w => `<div class="wd">${w}</div>`).join("")}
-    ${[...Array(42)].map((_, i) => { const d = addDays(start, i), s = ds(d); const items = ag[s] || []; const fr = periodsOn(s).some(p => p.type === "frei");
-      return `<div class="mc ${d.getMonth() !== ref.getMonth() ? "out" : ""} ${s === today ? "today" : ""} ${fr ? "free" : ""}" data-gotoweek="${s}"><span class="n">${d.getDate()}</span>${items.slice(0,4).map(x => x.type === "occ" ? `<span class="e ${areaOf(x.ev)} tone"${tAttr(x.ev)}>${esc(x.ev.short || x.ev.title)}</span>` : x.type === "task" ? `<span class="e task">☐ ${esc(x.t.title)}</span>` : `<span class="e exam">${esc(x.e.title)}</span>`).join("")}${items.length > 4 ? `<span class="e task">+${items.length-4} weitere</span>` : ""}</div>`; }).join("")}</div>`;
+    ${[...Array(42)].map((_, i) => { const d = addDays(start, i), s = ds(d); const items = ag[s] || []; const bands = periodsOn(s).filter(p => p.type === "frei" || p.type === "pruef");
+      return `<div class="mc ${d.getMonth() !== ref.getMonth() ? "out" : ""} ${s === today ? "today" : ""}" data-gotoweek="${s}">${bands.map(p => `<div class="band ${p.type} ${s === p.start || d.getDay() === 1 ? "bs" : ""} ${s === p.end || d.getDay() === 0 ? "be" : ""}" title="${esc(p.title)}">${s === p.start || d.getDay() === 1 ? esc(p.title) : "&nbsp;"}</div>`).join("")}<span class="n">${d.getDate()}</span>${items.slice(0,4).map(x => x.type === "occ" ? `<span class="e ${areaOf(x.ev)} tone ${x.cancelled ? "cancel" : ""}"${tAttr(x.ev)} title="${esc((x.ev.short || x.ev.title) + (x.plan.topic ? " · " + x.plan.topic : ""))}"><b>${esc(areaOf(x.ev) === "privat" ? x.ev.title : (x.ev.short || ctxOf(x.ev)?.short || x.ev.title))}</b>${x.plan.topic ? " · " + esc(x.plan.topic) : ""}</span>` : x.type === "task" ? `<span class="e task">☐ ${esc(x.t.title)}</span>` : `<span class="e exam">${esc(x.e.title)}</span>`).join("")}${items.length > 4 ? `<span class="e task">+${items.length-4} weitere</span>` : ""}</div>`; }).join("")}</div>`;
 }
 
 function vAufgaben(){
   let ts = visible("task");
-  ts = S.taskFilter === "open" ? ts.filter(t => !t.done) : S.taskFilter === "done" ? ts.filter(t => t.done) : S.taskFilter === "class" ? ts.filter(t => t.forClass && !t.done) : ts;
+  if(S.taskFilter === "class") S.taskFilter = "open";
+  ts = S.taskFilter === "open" ? ts.filter(t => !t.done) : S.taskFilter === "done" ? ts.filter(t => t.done) : ts;
   const groups = {};
   for(const t of ts){ const k = t.ctx || ""; (groups[k] ||= []).push(t); }
-  const ordered = Object.keys(groups).sort((a,b) => { const A = get(a), B = get(b); return ((A?.area||"z")+(A?.name||"")).localeCompare((B?.area||"z")+(B?.name||"")); });
-  const filt = [["open","Offen"],["class","Aufträge für Klassen"],["done","Erledigt"],["all","Alle"]];
-  return pageHead("Aufgaben & Aufträge", "Uni-Aufträge, Unterrichtsvorbereitung und Aufträge für deine Klassen", `<div class="seg">${filt.map(([k,l]) => `<button type="button" data-tf="${k}" class="${S.taskFilter===k?"on":""}">${l}</button>`).join("")}</div>`) +
-    `<div class="card" style="margin-bottom:16px"><form class="row" id="quickTask"><input id="qt-title" name="title" placeholder="Schnell erfassen: z. B. Lernkontrolle Quadratische Gleichungen" style="flex:2;min-width:220px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 9px"><select id="qt-ctx" name="ctx" style="flex:1;min-width:160px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 9px">${ctxOptions().map(([a,b]) => `<option value="${esc(a)}">${esc(b)}</option>`).join("")}</select><input id="qt-due" name="due" type="date" style="border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 9px"><button class="btn primary" type="submit">Hinzufügen</button></form></div>` +
-    (ordered.length ? `<div class="grid g2">${ordered.map(k => { const c = get(k); const list = groups[k].sort((a,b) => (a.due||"9999").localeCompare(b.due||"9999")); return `<div class="card"><h2><span class="row">${c ? `<span class="dot" style="background:hsl(${hueOf(c)} 60% 50%)"></span>${esc(c.name)}` : "Ohne Zuordnung"}</span><span class="count">${list.length}</span></h2><div class="list">${list.map(taskRow).join("")}</div></div>`; }).join("")}</div>` : `<div class="card empty">Hier ist nichts. ${S.taskFilter === "open" ? "Alles erledigt." : ""}</div>`);
+  const areaOrder = { uni: 0, kbs: 1, privat: 2 };
+  const sections = [["uni", "Uni Freiburg"], ["kbs", "KBS"], ["privat", "Privat"], ["", "Ohne Zuordnung"]];
+  const byArea = {};
+  for(const k of Object.keys(groups)){ const c = get(k); (byArea[c ? c.area : ""] ||= []).push(k); }
+  const seg = (items, cur, attr) => `<div class="seg" style="width:auto">${items.map(([k,l]) => `<button type="button" ${attr}="${k}" class="${cur===k?"on":""}">${l}</button>`).join("")}</div>`;
+  const counts = { open: visible("task").filter(t => !t.done).length, done: visible("task").filter(t => t.done).length };
+  const sortT = (a,b) => S.taskFilter === "done" ? (b.doneAt||"").localeCompare(a.doneAt||"") : (a.due || a.day || "9999").localeCompare(b.due || b.day || "9999");
+  return pageHead("Aufgaben", S.area === "all" ? "Was du für die Uni, die KBS und privat erledigen willst" : `Nur ${AREA_LABEL[S.area]} · Bereich links bei «Anzeigen» wählen`,
+      seg([["open",`Offen (${counts.open})`],["done",`Erledigt (${counts.done})`],["all","Alle"]], S.taskFilter, "data-tf")) +
+    `<div class="card" style="margin-bottom:16px"><form class="row" id="quickTask"><input id="qt-title" name="title" placeholder="Schnell erfassen: z. B. Lernkontrolle Quadratische Gleichungen" style="flex:2;min-width:220px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 9px"><select id="qt-ctx" name="ctx" style="flex:1;min-width:160px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 9px">${ctxOptions().filter(([a]) => !a || S.area === "all" || get(a)?.area === S.area).map(([a,b]) => `<option value="${esc(a)}">${esc(b)}</option>`).join("")}</select><input id="qt-due" name="due" type="date" style="border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 9px"><button class="btn primary" type="submit">Hinzufügen</button></form></div>` +
+    (Object.keys(groups).length ? sections.filter(([ar]) => byArea[ar]).map(([ar, title]) => `<h2 style="margin:18px 0 10px">${title}</h2><div class="grid g2">${byArea[ar].sort((a,b) => (get(a)?.name||"").localeCompare(get(b)?.name||"")).map(k => { const c = get(k); const list = groups[k].sort(sortT); return `<div class="card"><h2><span class="row">${c ? `<span class="dot" style="background:hsl(${hueOf(c)} 60% 50%)"></span><a href="#klasse-${c.id}" style="color:inherit;text-decoration:none">${esc(c.name)}</a>` : "Ohne Zuordnung"}</span><span class="count">${list.length}</span></h2><div class="list">${list.map(taskRow).join("")}</div></div>`; }).join("")}</div>`).join("")
+      : `<div class="card empty">${S.taskFilter === "open" ? "Keine offenen Aufgaben. Alles erledigt." : "Hier ist nichts."}</div>`);
 }
 
 function vPruefungen(){
@@ -798,7 +936,7 @@ function vKlassen(){
     return `<div class="card ctxcard ${c.area} tone"${tAttr(c)} data-ctx="${c.id}" tabindex="0"><h3>${esc(c.name)}</h3>
       <div class="stats">${area === "kbs" ? `<span><b>${st}</b>SuS</span>` : ""}<span><b>${tk}</b>offene Aufgaben</span><span><b>${all("doc").filter(d => d.ctx === c.id).length}</b>Dokumente</span></div>
       <div style="font-size:.85rem;color:var(--muted)">${nx ? `Nächste Prüfung: ${esc(nx.title)}, ${fmtD(nx.date)}` : "Keine Prüfung geplant"}</div></div>`; }).join("")}</div>`; };
-  return pageHead("Klassen & Kurse", "Deine KBS-Klassen und Uni-Veranstaltungen") + (cs.length ? sec("kbs","KBS · Unterricht") + sec("uni","Uni Freiburg · Studium") : `<div class="card empty">Noch keine Klassen oder Kurse. Lege sie mit <b>+ Neu</b> an.</div>`);
+  return pageHead("Klassen & Kurse", "Deine KBS-Klassen, Uni-Veranstaltungen und privaten Bereiche") + (cs.length ? sec("kbs","KBS · Unterricht") + sec("uni","Uni Freiburg · Studium") + sec("privat","Privat") : `<div class="card empty">Noch keine Klassen oder Kurse. Lege sie mit <b>+ Neu</b> an.</div>`);
 }
 
 /* ---------- Kurs- / Klassenseite ---------- */
@@ -815,7 +953,22 @@ function ctxData(cid, from, to){
   const topics = all("topic").filter(t => t.ctx === cid && t.start && t.end).sort((a,b) => a.start.localeCompare(b.start));
   return { occ, les, tk, ex, dc, nt, topics };
 }
-function topicDocs(t){ return all("doc").filter(d => d.ctx === t.ctx && (d.topic === t.id || (d.day && d.day >= t.start && d.day <= t.end))); }
+const evLabel = ev => `${ev.title} · ${ev.repeat && ev.repeat !== "none" ? (ev.repeat === "biweekly" ? "alle 2 Wochen " : "jeden ") : ""}${WDL[pd(ev.date).getDay()]}${ev.start ? " " + ev.start : ""}`;
+function evOptions(cid, cur){
+  const evs = all("event").filter(e => e.ctx && e.ctx === cid && e.date).sort((a,b) => (pd(a.date).getDay()+6)%7 - (pd(b.date).getDay()+6)%7 || (a.start||"").localeCompare(b.start||""));
+  return [`<option value="">Alle Lektionen / Termine in diesem Zeitraum</option>`, ...evs.map(e => `<option value="${esc(e.id)}" ${cur === e.id ? "selected" : ""}>Nur: ${esc(evLabel(e))}</option>`)].join("");
+}
+let TD_CACHE = new Map();
+function topicDays(t){
+  if(!t.ev) return null;
+  const k = t.id + "|" + t.start + "|" + t.end + "|" + t.ev;
+  if(!TD_CACHE.has(k)) TD_CACHE.set(k, new Set(occurrences(t.start, t.end, true).filter(o => o.ev.id === t.ev && !o.cancelled).map(o => o.day)));
+  return TD_CACHE.get(k);
+}
+const topicOnDay = (t, day) => !!t.start && !!t.end && t.start <= day && day <= t.end && (!t.ev || topicDays(t).has(day));
+const topicForOcc = o => all("topic").filter(t => t.ctx === o.ev.ctx && t.start && t.end && t.start <= o.day && o.day <= t.end && (!t.ev || t.ev === o.ev.id));
+const topicScope = t => { const ev = t.ev ? get(t.ev) : null; return ev ? "nur " + evLabel(ev) : ""; };
+function topicDocs(t){ return all("doc").filter(d => d.ctx === t.ctx && (d.topic === t.id || (d.day && topicOnDay(t, d.day)))); }
 function vKlasse(){
   const c = get(S.ctxId);
   if(!c) return pageHead("Nicht gefunden", "") + `<a href="#klassen">Zurück zu den Klassen</a>`;
@@ -824,7 +977,7 @@ function vKlasse(){
   const D = ctxData(c.id, from, to);
   const months = [...Array(12)].map((_, i) => new Date(y, 7 + i, 1));
   const cell = s => {
-    const tp = D.topics.find(t => t.start <= s && s <= t.end);
+    const tp = D.topics.find(t => topicOnDay(t, s));
     const free = isFreeFor(s, c.area);
     const cls = ["c", free ? "free" : D.les.has(s) ? "les" : "", tp ? "tpc" : "", s === today ? "today" : ""].join(" ");
     const mk = (D.tk[s] ? `<i class="mk"></i>` : "") + (D.ex[s] ? `<i class="mk x"></i>` : "") + (D.dc[s] ? `<i class="mk d"></i>` : "") + (D.nt[s] ? `<i class="mk n"></i>` : "");
@@ -841,20 +994,24 @@ function vKlasse(){
   const seatGrid = `<div class="board">Wandtafel / Pult</div><div class="seats" style="grid-template-columns:repeat(${seat.cols},minmax(0,1fr))">${[...Array(seat.rows * seat.cols)].map((_, i) => { const k = `${Math.floor(i/seat.cols)}-${i%seat.cols}`; const st = get(seat.seats?.[k]); return `<button type="button" class="seat ${st ? "on tone" : ""}"${st ? tAttr(c) : ""} data-seat="${k}">${st ? esc(st.name) : "+"}</button>`; }).join("")}</div>
     <div class="row" style="margin-top:10px;font-size:.82rem;color:var(--muted)"><label>Reihen <input class="inp" id="seatRows" type="number" min="1" max="10" value="${seat.rows}" style="width:64px"></label><label>Plätze pro Reihe <input class="inp" id="seatCols" type="number" min="1" max="12" value="${seat.cols}" style="width:64px"></label>${studs.filter(s => !Object.values(seat.seats || {}).includes(s.id)).length ? `<span>Ohne Platz: ${studs.filter(s => !Object.values(seat.seats || {}).includes(s.id)).map(s => esc(s.name)).join(", ")}</span>` : ""}</div>`;
   return `<div style="margin-bottom:8px"><a href="#klassen" style="font-size:.88rem">‹ Klassen & Kurse</a></div>` +
-    pageHead(`<span class="dot" style="width:14px;height:14px;background:hsl(${hueOf(c)} 60% 50%);vertical-align:middle;margin-right:8px"></span>${esc(c.name)}`, `${c.area === "kbs" ? "KBS-Klasse" : "Uni-Kurs"} · Jahresplan ${y}/${String(y+1).slice(2)} · Klick auf einen Tag: Aufgaben, Dokumente und Notizen ablegen`, links) +
+    pageHead(`<span class="dot" style="width:14px;height:14px;background:hsl(${hueOf(c)} 60% 50%);vertical-align:middle;margin-right:8px"></span>${esc(c.name)}`, `${c.area === "kbs" ? "KBS-Klasse" : c.area === "privat" ? "Privat" : "Uni-Kurs"} · Jahresplan ${y}/${String(y+1).slice(2)} · Klick auf einen Tag: Aufgaben, Dokumente und Notizen ablegen`, links) +
     `<div class="cpage">
       <div>
-        <div class="legend"><span><i class="sw tone" style="--h:${hueOf(c)};background:var(--sf)"></i>${c.area === "kbs" ? "Lektion" : "Kurstermin"}</span><span><i class="sw" style="box-shadow:inset 0 -4px 0 var(--muted);background:var(--surface-2)"></i>Themenblock</span><span><i class="mk"></i>Aufgabe</span><span><i class="mk x"></i>Prüfung</span><span><i class="mk d"></i>Dokument</span><span><i class="mk n"></i>Notiz</span></div>
+        <div class="legend"><span><i class="sw tone" style="--h:${hueOf(c)};background:var(--sf)"></i>${c.area === "kbs" ? "Lektion" : c.area === "privat" ? "Termin" : "Kurstermin"}</span><span><i class="sw" style="box-shadow:inset 0 -4px 0 var(--muted);background:var(--surface-2)"></i>Themenblock</span><span><i class="mk"></i>Aufgabe</span><span><i class="mk x"></i>Prüfung</span><span><i class="mk d"></i>Dokument</span><span><i class="mk n"></i>Notiz</span></div>
         <div class="tone"${tAttr(c)}>${year}</div>
       </div>
       <div class="grid" style="gap:16px">
         <div class="card"><h2>Offene Aufgaben <span class="count">${open.length}</span></h2>${open.length ? `<div class="list">${open.map(taskRow).join("")}</div>` : `<div class="empty">Alles erledigt.</div>`}<button type="button" class="btn small" data-newk="task" style="margin-top:8px">+ Aufgabe</button></div>
-        <div class="card"><h2>Themenblöcke <button type="button" class="btn small" data-newk="topic">+ Block</button></h2>${D.topics.length ? `<div class="grid" style="gap:8px">${D.topics.map(t => `<div class="folder" style="--th:${topicHue(t)}" data-topic="${t.id}" tabindex="0"><span aria-hidden="true">▤</span><div><div style="font-weight:600">${esc(t.title)}</div><div style="font-size:.78rem;color:var(--muted)">${fmtD(t.start)} – ${fmtD(t.end)}</div></div><span class="chip neutral">${topicDocs(t).length} Dok.</span></div>`).join("")}</div>` : `<div class="empty">Markiere Themen über einen Zeitraum. Dokumente aus diesen Tagen landen automatisch im Ordner des Themas.</div>`}</div>
+        <div class="card"><h2>Themenblöcke <button type="button" class="btn small" data-newk="topic">+ Block</button></h2>${D.topics.length ? `<div class="grid" style="gap:8px">${D.topics.map(t => `<div class="folder" style="--th:${topicHue(t)}" data-topic="${t.id}" tabindex="0"><span aria-hidden="true">▤</span><div><div style="font-weight:600">${esc(t.title)}</div><div style="font-size:.78rem;color:var(--muted)">${fmtD(t.start)} – ${fmtD(t.end)}${t.ev ? ` · ${esc(topicScope(t))}` : ""}</div></div><span class="chip neutral">${topicDocs(t).length} Dok.</span></div>`).join("")}</div>` : `<div class="empty">Markiere Themen über einen Zeitraum, für alle Lektionen oder nur für eine bestimmte (z. B. nur dienstags). Dokumente aus diesen Tagen landen automatisch im Ordner des Themas.</div>`}</div>
         <div class="card"><h2>Prüfungen <button type="button" class="btn small" data-newk="exam">+ Prüfung</button></h2>${exams.length ? `<div class="list">${exams.map(examRow).join("")}</div>` : `<div class="empty">Keine anstehenden Prüfungen.</div>`}</div>
       </div>
     </div>
     <div class="grid g2" style="margin-top:16px">
-      <div class="card"><h2>${c.area === "kbs" ? "Infos zur Klasse" : "Infos zum Kurs"} <span class="count" id="infoState"></span></h2><textarea class="inp" id="ctxInfo" style="min-height:220px" placeholder="${c.area === "kbs" ? "z. B. Klassenlehrperson, Absprachen, Lehrmittel, Nachteilsausgleiche, Elternkontakte …" : "z. B. Dozent:in, Raum, Leistungsnachweis, Abgabefristen …"}">${esc(c.info)}</textarea><div style="font-size:.78rem;color:var(--muted);margin-top:4px">Wird gespeichert, sobald du ausserhalb des Feldes klickst.</div></div>
+      <div class="card"><h2>${c.area === "kbs" ? "Infos zur Klasse" : c.area === "privat" ? "Infos" : "Infos zum Kurs"} <span class="count" id="infoState"></span></h2><textarea class="inp" id="ctxInfo" style="min-height:220px" placeholder="${c.area === "kbs" ? "z. B. Klassenlehrperson, Absprachen, Lehrmittel, Nachteilsausgleiche, Elternkontakte …" : "z. B. Dozent:in, Raum, Leistungsnachweis, Abgabefristen …"}">${esc(c.info)}</textarea><div style="font-size:.78rem;color:var(--muted);margin-top:4px">Wird gespeichert, sobald du ausserhalb des Feldes klickst.</div></div>
+      <div class="card"><h2>Ideen & Notizen <span class="count">${all("note").filter(n => n.ctx === c.id).length}</span></h2>
+        <form id="ctxIdea" class="row" style="margin-bottom:10px"><input class="inp" id="ci-t" name="t" placeholder="Neue Idee oder Notiz" style="flex:1"><button class="btn" type="submit">Hinzufügen</button></form>
+        ${(() => { const ns = all("note").filter(n => n.ctx === c.id).sort((a,b) => (a.day ? 1 : 0) - (b.day ? 1 : 0) || (b.created||0) - (a.created||0)); return ns.length ? `<div class="list">${ns.map(n => `<div class="li" style="grid-template-columns:1fr auto"><div><div class="txt" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(n.text)}</div><div class="m">${n.day ? `<button type="button" class="chip neutral" style="border:0;cursor:pointer" data-day="${c.id}|${n.day}">${fmtD(n.day)}</button>` : `<span class="chip neutral">Idee</span>`}</div></div><div class="row"><button type="button" class="btn small" data-ntask="${n.id}">→ Aufgabe</button><button type="button" class="btn small" data-ndel="${n.id}">Löschen</button></div></div>`).join("")}</div>` : `<div class="empty">Ideen aus dem Brain Dump, die du hier zuordnest, erscheinen in dieser Liste.</div>`; })()}
+      </div>
       ${c.area === "kbs" ? `<div class="card"><h2>Klassenspiegel</h2>${studs.length ? seatGrid : `<div class="empty">Füge unten zuerst die Schüler:innen hinzu, dann kannst du sie den Plätzen zuordnen.</div>`}</div>
       <div class="card" style="grid-column:1/-1"><h2>Schüler:innen <span class="count">${studs.length}</span></h2>
         ${studs.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>Name</th><th>Notizen</th><th></th></tr></thead><tbody>${studs.map(s => `<tr><td style="font-weight:500">${esc(s.name)}</td><td style="color:var(--muted)">${esc(s.notes) || "–"}</td><td><button type="button" class="btn small" data-edit="${s.id}">Bearbeiten</button></td></tr>`).join("")}</tbody></table></div>` : ""}
@@ -891,7 +1048,7 @@ function openDay(cid, day){
 function fillDay(){
   const { ctx: cid, day } = S.modal; const c = get(cid); const box = $("#dayLists"); if(!c || !box) return;
   const occ = occurrences(day, day, true).filter(o => o.ev.ctx === cid);
-  const tps = all("topic").filter(t => t.ctx === cid && t.start <= day && day <= t.end);
+  const tps = all("topic").filter(t => t.ctx === cid && topicOnDay(t, day));
   const tasks = all("task").filter(t => t.ctx === cid && (t.day === day || t.due === day)).sort((a,b) => a.done - b.done);
   const docs = all("doc").filter(d => d.ctx === cid && d.day === day);
   const notes = all("note").filter(n => n.ctx === cid && n.day === day);
@@ -913,7 +1070,7 @@ function openTopic(id){
   S.modal = { type: "topic", id };
   const root = $("#modalRoot");
   root.innerHTML = `<div class="ov"><div class="modal" style="width:min(660px,100%)">
-    <div class="head"><div><span class="topicchip" style="--th:${topicHue(t)}">▤ Themenblock</span><h2 style="margin-top:6px">${esc(t.title)}</h2><div style="color:var(--muted);font-size:.9rem">${fmtD(t.start)} ${pd(t.start).getFullYear()} – ${fmtD(t.end)} ${pd(t.end).getFullYear()} · ${esc(ctxOf(t)?.name || "")}</div></div><button type="button" class="btn ghost" id="tclose" aria-label="Schliessen">✕</button></div>
+    <div class="head"><div><span class="topicchip" style="--th:${topicHue(t)}">▤ Themenblock</span><h2 style="margin-top:6px">${esc(t.title)}</h2><div style="color:var(--muted);font-size:.9rem">${fmtD(t.start)} ${pd(t.start).getFullYear()} – ${fmtD(t.end)} ${pd(t.end).getFullYear()} · ${esc(ctxOf(t)?.name || "")}${t.ev ? ` · ${esc(topicScope(t))}` : ""}</div></div><button type="button" class="btn ghost" id="tclose" aria-label="Schliessen">✕</button></div>
     ${t.notes ? `<div style="white-space:pre-wrap;font-size:.9rem">${esc(t.notes)}</div>` : ""}
     <div id="topicLists" class="grid" style="gap:12px"></div>
     <form id="topicLink" class="row"><input class="inp" id="tl-title" name="title" placeholder="Dokument (Titel)" style="flex:1;min-width:140px"><input class="inp" id="tl-url" name="url" type="url" placeholder="Link aus Teams/OneDrive" style="flex:1;min-width:160px"><button class="btn" type="submit">In Ordner ablegen</button>${assets ? `<label class="btn" style="cursor:pointer">Datei<input type="file" id="topicFile" multiple hidden></label>` : ""}</form>
@@ -931,8 +1088,8 @@ function openTopic(id){
 function fillTopic(){
   const t = get(S.modal.id); const box = $("#topicLists"); if(!t || !box) return;
   const docs = topicDocs(t).sort((a,b) => (a.day||"").localeCompare(b.day||""));
-  const tasks = all("task").filter(x => x.ctx === t.ctx && (x.day || x.due) && (x.day || x.due) >= t.start && (x.day || x.due) <= t.end).sort((a,b) => a.done - b.done);
-  const occ = occurrences(t.start, t.end, true).filter(o => o.ev.ctx === t.ctx);
+  const tasks = all("task").filter(x => x.ctx === t.ctx && (x.day || x.due) && topicOnDay(t, x.day || x.due)).sort((a,b) => a.done - b.done);
+  const occ = occurrences(t.start, t.end, true).filter(o => o.ev.ctx === t.ctx && (!t.ev || o.ev.id === t.ev));
   const sec = (h, body) => `<div><div class="section-h">${h}</div>${body}</div>`;
   box.innerHTML = sec(`Dokumente (${docs.length})`, docs.length ? `<div class="list">${docs.map(d => docRow(d).replace('<div class="m">', `<div class="m"><span>${d.day ? fmtD(d.day) : ""}</span>`)).join("")}</div>` : `<div class="empty">Noch leer. Lege Dokumente an einem Tag dieses Blocks ab oder direkt hier.</div>`) +
     sec(`Aufgaben (${tasks.filter(x => !x.done).length} offen)`, tasks.length ? `<div class="list">${tasks.map(taskRow).join("")}</div>` : `<div class="empty">Keine Aufgaben in diesem Zeitraum.</div>`) +
@@ -961,8 +1118,9 @@ const dumpForm = (big) => `<form id="dumpForm" class="grid" style="gap:8px"><tex
 function noteCard(n){
   return `<div class="note"><div class="txt">${esc(n.text)}</div>
     <div class="row" style="font-size:.8rem;color:var(--muted)"><span>${n.created ? fmtD(ds(new Date(n.created))) : ""}</span>
-      <select data-nctx="${n.id}" aria-label="Klasse oder Kurs zuordnen">${ctxOptions().map(([a,b]) => `<option value="${esc(a)}" ${(n.ctx||"") === a ? "selected" : ""}>${esc(a ? b : "Kurs / Klasse wählen")}</option>`).join("")}</select>
-      <input type="date" data-nday="${n.id}" value="${esc(n.day)}" aria-label="Datum zuordnen">
+      <select data-nctx="${n.id}" aria-label="Klasse oder Kurs zuordnen">${ctxOptions().map(([a,b]) => `<option value="${esc(a)}" ${(n.ctx||"") === a ? "selected" : ""}>${esc(a ? b : "Klasse / Kurs wählen")}</option>`).join("")}</select>
+      <input type="date" data-nday="${n.id}" value="${esc(n.day)}" aria-label="Datum zuordnen (leer = Idee ohne Datum)" title="Leer lassen: landet als Idee bei den Notizen der Klasse / des Kurses">
+      ${n.ctx && !n.day ? `<span class="chip neutral">Idee · bei ${esc(ctxOf(n)?.short || ctxOf(n)?.name || "")}</span>` : ""}
       <span style="flex:1"></span>
       ${n.ctx && n.day ? `<button type="button" class="btn small" data-day="${n.ctx}|${n.day}">Tag öffnen</button>` : ""}
       <button type="button" class="btn small" data-ntask="${n.id}">→ Aufgabe</button>
@@ -970,8 +1128,8 @@ function noteCard(n){
 }
 function vNotizen(){
   const ns = all("note").sort((a,b) => (b.created||0) - (a.created||0));
-  const open = ns.filter(n => !n.ctx || !n.day), done = ns.filter(n => n.ctx && n.day);
-  return pageHead("Brain Dump", "Schnell notieren, später einem Kurs oder einer Klasse und einem Tag zuordnen") +
+  const open = ns.filter(n => !n.ctx), done = ns.filter(n => n.ctx);
+  return pageHead("Brain Dump", "Schnell notieren, später zuordnen: mit Datum landet die Notiz an diesem Tag, ohne Datum als Idee bei der Klasse oder dem Kurs") +
     `<div class="card" style="margin-bottom:16px">${dumpForm(true)}</div>
     <h2 style="margin:0 0 10px">Noch nicht zugeordnet <span style="font:500 .85rem var(--font-body);color:var(--muted)">${open.length}</span></h2>
     ${open.length ? `<div class="grid g2">${open.map(noteCard).join("")}</div>` : `<div class="card empty">Alles eingeordnet.</div>`}
@@ -994,6 +1152,7 @@ function bindCommon(m, ret){
   m.querySelectorAll("[data-step]").forEach(b => b.onclick = () => { const [id, i] = b.dataset.step.split("|"); const e = get(id); if(!e) return; const steps = (e.steps||[]).map((s, k) => k == i ? { ...s, done: !s.done } : s); save({ ...e, steps }); });
   m.querySelectorAll("[data-dl]").forEach(b => b.onclick = () => openFile(get(b.dataset.dl), true));
   m.querySelectorAll("[data-openf]").forEach(b => b.onclick = () => openFile(get(b.dataset.openf), false));
+  m.querySelectorAll("[data-teams]").forEach(b => b.onclick = e => { e.stopPropagation(); const d = get(b.dataset.teams); if(d) save({ ...d, onTeams: !d.onTeams }); });
   m.querySelectorAll("[data-topic]").forEach(el => { const go = () => openTopic(el.dataset.topic); el.onclick = go; el.onkeydown = e => { if(e.key === "Enter") go(); }; });
   m.querySelectorAll("[data-day]").forEach(el => { const go = () => { const [c, d] = el.dataset.day.split("|"); openDay(c, d); }; el.onclick = go; el.onkeydown = e => { if(e.key === "Enter") go(); }; });
   m.querySelectorAll("[data-ndel]").forEach(b => b.onclick = () => { if(b.dataset.sure) remove(b.dataset.ndel); else { b.dataset.sure = 1; b.textContent = "Sicher?"; } });
@@ -1003,7 +1162,7 @@ function docRow(d){
   const isFile = !!d.assetId;
   const href = isFile ? "" : d.url;
   return `<div class="li"><span class="chip neutral">${esc(d.tag || (isFile ? "Datei" : "Link"))}</span>
-    <div class="clickable" data-docedit="${d.id}"><div class="t">${esc(d.title)}</div><div class="m">${ctxChip(d)}${isFile ? `<span>${esc(d.fileName || "")}${d.size ? " · " + Math.max(1, Math.round(d.size/1024)) + " KB" : ""}</span>` : ""}</div></div>
+    <div class="clickable" data-docedit="${d.id}"><div class="t">${esc(d.title)}</div><div class="m">${ctxChip(d)}${teamsChip(d)}${isFile ? `<span>${esc(d.fileName || "")}${d.size ? " · " + Math.max(1, Math.round(d.size/1024)) + " KB" : ""}</span>` : ""}</div></div>
     <div class="row">${isFile ? `<button type="button" class="btn small" data-openf="${d.id}">Öffnen</button>` : ""}${href ? `<a class="btn small" href="${esc(href)}" target="_blank" rel="noopener">Öffnen</a>` : ""}${isFile && downloads ? `<button type="button" class="btn small" data-dl="${d.id}">Herunterladen</button>` : ""}${ctxOf(d)?.teamsUrl ? `<a class="btn small" href="${esc(ctxOf(d).teamsUrl)}" target="_blank" rel="noopener">Teams</a>` : ""}</div></div>`;
 }
 function vDokumente(){
@@ -1031,10 +1190,12 @@ function openDocForm(d){
     await uploadFiles([f], meta);
   };
 }
-function vJahr(){
+function vJahr(nav = ""){
   const today = TODAY();
-  const now = new Date();
+  const now = nav ? pd(S.calRef) : new Date();
   const startY = now.getMonth() >= 7 ? now.getFullYear() : now.getFullYear() - 1;
+  const yocc = occurrences(`${startY}-08-01`, `${startY+1}-07-31`).filter(o => !o.cancelled);
+  const uD = new Set(yocc.filter(o => areaOf(o.ev) === "uni").map(o => o.day)), kD = new Set(yocc.filter(o => areaOf(o.ev) === "kbs").map(o => o.day)), pD = new Set(yocc.filter(o => areaOf(o.ev) === "privat").map(o => o.day));
   const months = [...Array(12)].map((_, i) => new Date(startY, 7 + i, 1));
   const ex = new Set(visible("exam").filter(e => e.date).map(e => e.date));
   const per = all("period").filter(p => p.start && p.end);
@@ -1045,10 +1206,10 @@ function vJahr(){
     return u && k ? "sem-both" : u ? "sem-uni" : k ? "sem-kbs" : "";
   };
   const plist = per.sort((a,b) => a.start.localeCompare(b.start));
-  return pageHead(`Jahresplan ${startY}/${String(startY+1).slice(2)}`, "Semester, Schuljahr, Ferien und Prüfungen auf einen Blick", `<button type="button" class="btn" data-newk="period">+ Zeitraum</button>`) +
-    `<div class="legend"><span><i class="sw" style="background:var(--uni-soft)"></i>Uni-Semester</span><span><i class="sw" style="background:var(--kbs-soft)"></i>KBS-Schuljahr</span><span><i class="sw" style="background:var(--surface-2)"></i>Ferien / frei</span><span><i class="dot" style="background:var(--bad)"></i>Prüfung</span></div>
+  return pageHead(`Jahr ${startY}/${String(startY+1).slice(2)}`, "Semester, Ferien, Lektionen und Prüfungen auf einen Blick · Klick auf einen Tag zeigt ihn gross", nav + `<button type="button" class="btn" data-newk="period">+ Zeitraum</button>`) +
+    `<div class="legend"><span><i class="sw" style="background:var(--uni-soft)"></i>Uni-Semester</span><span><i class="sw" style="background:var(--kbs-soft)"></i>KBS-Schuljahr</span><span><i class="sw" style="background:var(--surface-2)"></i>Ferien / frei</span><span><i class="yl u" style="position:static"></i>Uni-Termin</span><span><i class="yl k" style="position:static"></i>KBS-Lektion</span><span><i class="yl p" style="position:static"></i>Privat</span><span><i class="dot" style="background:var(--bad)"></i>Prüfung</span></div>
     <div class="grid" style="grid-template-columns:minmax(0,3fr) minmax(240px,1fr);align-items:start" id="yearWrap">
-    <div class="year">${months.map(m => { const st = monday(m); const cells = []; for(let i = 0; i < 42; i++){ const d = addDays(st, i); if(i >= 35 && d.getMonth() !== m.getMonth()) break; const s = ds(d); cells.push(d.getMonth() === m.getMonth() ? `<div class="c ${cls(s)} ${s === today ? "today" : ""} ${ex.has(s) ? "exam" : ""}" data-gotoweek="${s}" title="${fmtD(s)}">${d.getDate()}</div>` : `<div></div>`); }
+    <div class="year">${months.map(m => { const st = monday(m); const cells = []; for(let i = 0; i < 42; i++){ const d = addDays(st, i); if(i >= 35 && d.getMonth() !== m.getMonth()) break; const s = ds(d); cells.push(d.getMonth() === m.getMonth() ? `<div class="c ${cls(s)} ${s === today ? "today" : ""} ${ex.has(s) ? "exam" : ""}" data-gotoweek="${s}" title="${fmtD(s)}">${d.getDate()}<span class="yls">${uD.has(s) ? `<i class="yl u"></i>` : ""}${kD.has(s) ? `<i class="yl k"></i>` : ""}${pD.has(s) ? `<i class="yl p"></i>` : ""}</span></div>` : `<div></div>`); }
       return `<div class="card ym"><h3>${MON[m.getMonth()]} ${m.getFullYear()}</h3><div class="g">${["M","D","M","D","F","S","S"].map(w => `<div class="c wd">${w}</div>`).join("")}${cells.join("")}</div></div>`; }).join("")}</div>
     <div class="card"><h2>Zeiträume</h2>${plist.length ? `<div class="list">${plist.map(p => `<div class="li clickable" data-edit="${p.id}" style="grid-template-columns:auto 1fr"><span class="dot" style="margin-top:6px;background:${p.type === "frei" ? "var(--muted)" : p.area === "kbs" ? "var(--kbs)" : p.area === "uni" ? "var(--uni)" : "var(--accent)"}"></span><div><div class="t">${esc(p.title)}</div><div class="m">${fmtD(p.start)} ${pd(p.start).getFullYear()} – ${fmtD(p.end)} ${pd(p.end).getFullYear()}</div></div></div>`).join("")}</div>` : `<div class="empty">Trage Semester und Ferien ein. Lektionen fallen in Ferien dann automatisch weg.</div>`}</div></div>`;
 }
@@ -1120,10 +1281,12 @@ function bindSync(){
 function route(){
   const h = (location.hash || "#uebersicht").slice(1);
   if(h.startsWith("klasse-")){ S.view = "klasse"; S.ctxId = h.slice(7); }
+  else if(h === "jahr"){ S.view = "kalender"; S.calMode = "year"; }
   else S.view = VIEWS.some(v => v[0] === h) ? h : "uebersicht";
   renderAll(); window.scrollTo(0, 0);
 }
 function renderAll(){
+  TD_CACHE = new Map();
   renderNav(); renderStatus();
   const v = { uebersicht: vUebersicht, kalender: vKalender, aufgaben: vAufgaben, pruefungen: vPruefungen, klassen: vKlassen, klasse: vKlasse, notizen: vNotizen, sync: vSync, dokumente: vDokumente, jahr: vJahr }[S.view] || vUebersicht;
   const banner = S.mode === "error" ? `<div class="notice">Dieser Browser erlaubt keinen Gerätespeicher (z. B. im privaten Modus). Öffne die App normal oder installiert.</div>` : "";
@@ -1135,16 +1298,19 @@ function renderAll(){
 }
 function bindView(){
   const m = $("#main");
-  m.querySelectorAll("[data-act=new]").forEach(b => b.onclick = newMenu);
+  m.querySelectorAll("[data-act=new]").forEach(b => b.onclick = () => newForView(b.dataset.newkind));
   bindCommon(m, null);
   m.querySelectorAll("[data-ctx]").forEach(el => { const go = () => location.hash = "klasse-" + el.dataset.ctx; el.onclick = go; el.onkeydown = e => { if(e.key === "Enter") go(); }; });
   m.querySelectorAll("[data-newk]").forEach(b => b.onclick = () => { const k = b.dataset.newk; k === "doc" ? openDocForm({}) : openForm(k, defaultsFor(k)); });
   m.querySelectorAll("[data-cal]").forEach(b => b.onclick = () => { S.calMode = b.dataset.cal; lsSet("planer.cal", S.calMode); renderAll(); });
-  m.querySelectorAll("[data-calnav]").forEach(b => b.onclick = () => { const n = Number(b.dataset.calnav); if(!n) S.calRef = TODAY(); else { const r = pd(S.calRef); S.calRef = ds(S.calMode === "week" ? addDays(r, 7*n) : new Date(r.getFullYear(), r.getMonth()+n, 1)); } renderAll(); });
-  m.querySelectorAll("[data-gotoweek]").forEach(el => el.onclick = () => { S.calRef = el.dataset.gotoweek; S.calMode = "week"; lsSet("planer.cal","week"); location.hash = "kalender"; if(S.view === "kalender") renderAll(); });
+  m.querySelectorAll("[data-calnav]").forEach(b => b.onclick = () => { const n = Number(b.dataset.calnav); if(!n) S.calRef = TODAY(); else { const r = pd(S.calRef); S.calRef = ds(S.calMode === "day" ? addDays(r, n) : S.calMode === "week" ? addDays(r, 7*n) : S.calMode === "year" ? new Date(r.getFullYear()+n, r.getMonth(), 1) : new Date(r.getFullYear(), r.getMonth()+n, 1)); } renderAll(); });
+  m.querySelectorAll("[data-gotoweek]").forEach(el => el.onclick = () => { S.calRef = el.dataset.gotoweek; S.calMode = "day"; lsSet("planer.cal","day"); if(S.view === "kalender") { renderAll(); window.scrollTo(0, 0); } else location.hash = "kalender"; });
   m.querySelectorAll("[data-addday]").forEach(b => b.onclick = () => openForm("event", { date: b.dataset.addday, repeat: "none" }));
   m.querySelectorAll("[data-tf]").forEach(b => b.onclick = () => { S.taskFilter = b.dataset.tf; renderAll(); });
+  m.querySelectorAll("[data-ta]").forEach(b => b.onclick = () => { S.area = b.dataset.ta; lsSet("planer.area", S.area); renderAll(); });
   m.querySelectorAll("[data-df]").forEach(b => b.onclick = () => { S.docFilter = b.dataset.df; renderAll(); });
+  const ci = $("#ctxIdea");
+  if(ci) ci.onsubmit = async e => { e.preventDefault(); const t = ci.elements.t.value.trim(); if(!t) return; ci.reset(); await save({ id: uid(), kind: "note", created: Date.now(), text: t, ctx: S.ctxId, day: "" }); };
   const info = $("#ctxInfo");
   if(info) info.onblur = () => { const c = get(S.ctxId); if(c && (c.info || "") !== info.value){ save({ ...c, info: info.value }); toast("Infos gespeichert"); } };
   m.querySelectorAll("[data-seat]").forEach(b => b.onclick = () => openSeat(S.ctxId, b.dataset.seat));

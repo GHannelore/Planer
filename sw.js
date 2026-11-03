@@ -1,6 +1,6 @@
 // Service Worker: hält die App offline verfügbar.
 // Bei jedem Update die Versionsnummer erhöhen, damit alle Geräte die neue Version holen.
-const CACHE = "planer-v1";
+const CACHE = "planer-v8";
 const SHELL = ["./", "./index.html", "./config.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
