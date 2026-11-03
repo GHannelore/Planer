@@ -234,6 +234,24 @@ textarea.inp{width:100%;min-height:90px;resize:vertical}
 .lrow{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.86rem;flex-wrap:wrap}
 .lrow .t{overflow-wrap:anywhere}
 .lrow.done .t{text-decoration:line-through;color:var(--muted)}
+.lcols{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--line);padding-top:8px}
+.wk:not(.wkbig) .lcols{grid-template-columns:1fr}
+@media (max-width:700px){.lcols{grid-template-columns:1fr}}
+.lcol{min-width:0}
+.lrow.moved{color:var(--muted)} .lrow.moved .t{text-decoration:line-through}
+.lrow .ib{width:18px;text-align:center;flex:none;font-size:.85rem}
+.psec{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.psec.prep{border-left:4px solid var(--warn)} .psec.run{border-left:4px solid var(--ok)}
+.psec h3{display:flex;align-items:center;gap:8px}
+.psec .pn{width:22px;height:22px;border-radius:50%;background:var(--surface-2);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem}
+.psec .hint{margin:-4px 0 0;font-size:.82rem;color:var(--muted)}
+.irow{flex-wrap:nowrap}
+.irow .itext{flex:1;min-width:0;padding:4px 8px;font-size:.88rem}
+.irow .itext.isdone{text-decoration:line-through;color:var(--muted)}
+.carry{border-top:1px dashed var(--line);padding-top:8px}
+.dcom{font-size:.78rem;color:var(--muted);font-style:italic}
+.drow{padding:2px 0 6px;border-bottom:1px dashed var(--line)}
+.inp.sm{padding:3px 6px;font-size:.8rem}
 /* Modal */
 .ov{position:fixed;inset:0;background:rgba(10,12,20,.45);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;z-index:10;overflow:auto}
 .modal{background:var(--surface);border-radius:14px;width:min(560px,100%);padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:14px}
@@ -485,7 +503,7 @@ async function uploadFiles(files, meta = {}){
     const assetId = uid();
     try {
       await idb.put("blobs", { id: assetId, blob: f, name: f.name, type: f.type || "", pending: true });
-      await save({ id: uid(), kind: "doc", created: Date.now(), title: meta.title || f.name.replace(/\.[^.]+$/, ""), ctx: meta.ctx ?? (S.docFilter !== "all" ? S.docFilter : (S.view === "klasse" ? S.ctxId : "")), tag: meta.tag || "Material", notes: meta.notes || "", url: meta.url || "", day: meta.day || "", topic: meta.topic || "", assetId, fileName: f.name, size: f.size, contentType: f.type || "" });
+      await save({ id: uid(), kind: "doc", created: Date.now(), title: meta.title || f.name.replace(/\.[^.]+$/, ""), ctx: meta.ctx ?? (S.docFilter !== "all" ? S.docFilter : (S.view === "klasse" ? S.ctxId : "")), tag: meta.tag || "Material", notes: meta.notes || "", url: meta.url || "", day: meta.day || "", topic: meta.topic || "", assetId, fileName: f.name, size: f.size, contentType: f.type || "", ...(meta.delivery != null ? { delivery: meta.delivery, delivered: false } : {}) });
       toast(`${f.name} gespeichert`);
     } catch { toast(`${f.name} konnte nicht gespeichert werden.`); }
   }
@@ -573,6 +591,7 @@ function reminders(){
 
 /* ---------- Schemas für Formulare ---------- */
 const ctxOptions = () => [["", "– ohne –"], ...all("ctx").sort((a,b)=>(a.area+a.name).localeCompare(b.area+b.name)).map(c => [c.id, `${AREA_LABEL[c.area] || "Uni"} · ${c.name}`])];
+const DELIVERY_OPTS = [["teams","Teams"],["papier","Papier (kopieren)"],["onenote","OneNote"],["moodle","Moodle"],["andere","Anderes …"],["","nicht für SuS / nur für mich"]];
 const SCHEMA = {
   ctx: { label: "Klasse / Kurs", fields: [
     ["name","Name","text","full"], ["area","Bereich","select",null,[["kbs","KBS (Unterricht)"],["uni","Uni (Studium)"],["privat","Privat / Organisatorisches"]]], ["short","Kürzel","text"], ["shade","Farbton","select",null,[["0","Ton 1"],["1","Ton 2"],["2","Ton 3"],["3","Ton 4"],["4","Ton 5"],["5","Ton 6"]]],
@@ -590,7 +609,7 @@ const SCHEMA = {
     ["remind","Erinnern ab","select",null,[["7","1 Woche vorher"],["3","3 Tage vorher"],["14","2 Wochen vorher"],["21","3 Wochen vorher"],["1","1 Tag vorher"]]], ["topic","Thema / Stoff","text"],
     ["notes","Notizen","textarea","full"] ] },
   student: { label: "Schüler:in", fields: [ ["name","Name","text","full"], ["ctx","Klasse","ctx","full"], ["notes","Notizen (Lernstand, Absprachen …)","textarea","full"] ] },
-  doc: { label: "Dokument / Link", fields: [ ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["url","Link (z. B. Teams- oder OneDrive-Datei)","url","full"], ["day","Abgelegt am (Tag im Jahresplan)","date"], ["onTeams","Auf Teams hochgeladen","checkbox"], ["tag","Art","select",null,[["Material","Material"],["Prüfung","Prüfung"],["Lösung","Lösung"],["Auftrag","Auftrag"],["Uni","Uni-Unterlage"],["Sonstiges","Sonstiges"]]], ["notes","Notizen","textarea","full"] ] },
+  doc: { label: "Dokument / Link", fields: [ ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["url","Link (z. B. Teams- oder OneDrive-Datei)","url","full"], ["day","Abgelegt am (Tag im Jahresplan)","date"], ["delivery","An die SuS über","select",null,DELIVERY_OPTS], ["deliveryOther","Bei «Anderes»: wie?","text"], ["delivered","Schon erledigt (hochgeladen / kopiert / verteilt)","checkbox"], ["comment","Kommentar (z. B. «Lösungen erst nach der Stunde»)","text","full"], ["tag","Art","select",null,[["Material","Material"],["Prüfung","Prüfung"],["Lösung","Lösung"],["Auftrag","Auftrag"],["Uni","Uni-Unterlage"],["Sonstiges","Sonstiges"]]], ["notes","Notizen","textarea","full"] ] },
   topic: { label: "Themenblock", fields: [ ["title","Thema (z. B. Quadratische Gleichungen)","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["ev","Gilt für","evsel","full"], ["start","Von","date"], ["end","Bis","date"], ["notes","Lernziele / Notizen","textarea","full"] ] },
   period: { label: "Zeitraum", fields: [ ["title","Titel (z. B. Herbstferien)","text","full"], ["type","Art","select",null,[["semester","Semester / Schuljahr"],["frei","Ferien / unterrichtsfrei"],["pruef","Prüfungsphase"],["sonst","Sonstiges"]]], ["area","Gilt für","select",null,[["beide","Uni und KBS"],["uni","Uni"],["kbs","KBS"]]], ["start","Von","date"], ["end","Bis","date"] ] }
 };
@@ -612,6 +631,7 @@ function openForm(kind, item = {}, opts = {}){
     if(kind === "exam" && it.remind == null) it.remind = "7";
     if(kind === "ctx" && !it.area) it.area = S.area === "uni" ? "uni" : "kbs";
     if(kind === "period" && !it.area) it.area = "beide";
+    if(kind === "doc" && it.delivery == null) it.delivery = get(it.ctx)?.area === "kbs" ? "teams" : "";
     if(kind === "ctx" && it.shade == null) it.shade = String(all("ctx").filter(c => c.area === it.area).length % 6);
     if(kind === "topic" && it.shade == null) it.shade = String(all("topic").filter(t => t.ctx === it.ctx).length % 8);
   }
@@ -656,38 +676,6 @@ function openForm(kind, item = {}, opts = {}){
     await save(it);
   };
   setTimeout(() => $("#mform input:not([type=checkbox]), #mform select")?.focus(), 30);
-}
-
-function openLesson(occ){
-  S.modal = null;
-  const ev = occ.ev, plan = { ...occ.plan };
-  const c = ctxOf(ev);
-  const root = $("#modalRoot");
-  root.innerHTML = `<div class="ov"><form class="modal" id="lform">
-    <div class="head"><div><h2>${esc(ev.title)}</h2><div class="sub" style="color:var(--muted);font-size:.9rem">${fmtDL(occ.day)}${ev.start ? ` · ${ev.start}${ev.end ? "–"+ev.end : ""}` : ""}${c ? ` · ${esc(c.name)}` : ""}</div></div><button type="button" class="btn ghost" id="lclose" aria-label="Schliessen">✕</button></div>
-    <div class="form">
-      <label class="full">Thema dieser Stunde<input id="l-topic" name="topic" value="${esc(plan.topic)}" placeholder="z. B. Quadratische Gleichungen: Wurzel ziehen"></label>
-      <label class="full">Ablauf / Planung<textarea id="l-notes" name="notes" placeholder="Einstieg, Übungen, Aufträge fürs Selbststudium …">${esc(plan.notes)}</textarea></label>
-      <label class="full">Material-Link (Teams, OneNote …)<input id="l-url" name="url" type="url" value="${esc(plan.url)}"></label>
-      <label class="cb"><input type="checkbox" id="l-ready" name="ready" ${plan.ready ? "checked" : ""}> Stunde fertig vorbereitet</label>
-      <label class="cb"><input type="checkbox" id="l-cancel" name="cancelled" ${plan.cancelled ? "checked" : ""}> Fällt aus</label>
-    </div>
-    <div class="foot"><div class="row"><button type="button" class="btn" id="ledit">Ganze Serie bearbeiten</button>${c ? `<button type="button" class="btn" id="lday">Dokumente & Aufgaben</button>` : ""}${c?.teamsUrl ? `<a class="btn" href="${esc(c.teamsUrl)}" target="_blank" rel="noopener">In Teams öffnen</a>` : ""}</div>
-    <div class="row"><button type="button" class="btn" id="lcancel">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div>
-  </form></div>`;
-  const close = () => { root.innerHTML = ""; S.modal = null; const r = S.returnTo; S.returnTo = null; if(r) r(); };
-  $("#lclose").onclick = close; $("#lcancel").onclick = close;
-  $(".ov").addEventListener("mousedown", e => { if(e.target.classList.contains("ov")) close(); });
-  $("#ledit").onclick = () => { root.innerHTML = ""; openForm("event", ev); };
-  const ld = $("#lday"); if(ld) ld.onclick = () => { root.innerHTML = ""; S.returnTo = null; openDay(c.id, occ.day); };
-  $("#lform").onsubmit = async e => {
-    e.preventDefault(); const f = e.target;
-    const p = { topic: f.topic.value.trim(), notes: f.notes.value.trim(), url: f.url.value.trim(), cancelled: f.cancelled.checked, ready: f.ready.checked };
-    const plans = { ...(ev.plans || {}) };
-    if(!p.topic && !p.notes && !p.url && !p.cancelled && !p.ready) delete plans[occ.day]; else plans[occ.day] = p;
-    close(); await save({ ...ev, plans });
-  };
-  setTimeout(() => $("#l-topic")?.focus(), 30);
 }
 
 function newMenu(){
@@ -742,39 +730,182 @@ function occBlock(o){
 }
 function agendaBlock(x){
   if(x.type === "occ") return occBlock(x);
-  if(x.type === "task") return `<div class="ev task" data-edit="${x.t.id}" tabindex="0">☐ ${esc(x.t.title)}</div>`;
+  if(x.type === "task") return `<div class="ev task" style="display:flex;gap:6px;align-items:flex-start"><input type="checkbox" data-done="${x.t.id}" ${x.t.done ? "checked" : ""} aria-label="Erledigt" style="width:15px;height:15px;margin:1px 0 0;flex:none"><span data-edit="${x.t.id}" tabindex="0" style="cursor:pointer">${esc(x.t.title)}</span></div>`;
   return `<div class="ev exam" data-edit="${x.e.id}" tabindex="0">Prüfung: ${esc(x.e.title)}</div>`;
 }
 
 /* ---------- Ausführliche Wochenansicht ---------- */
 const isKbsDoc = d => (ctxOf(d)?.area || "") === "kbs";
-const teamsChip = d => isKbsDoc(d) ? `<button type="button" class="chip ${d.onTeams ? "ok" : "warn"}" style="border:0;cursor:pointer" data-teams="${d.id}" title="Klicken zum Umschalten">${d.onTeams ? "✓ auf Teams" : "noch nicht auf Teams"}</button>` : "";
+const DELIVERY = { teams: ["Teams", "auf Teams", "noch hochladen"], papier: ["Papier", "kopiert", "noch kopieren"], onenote: ["OneNote", "auf OneNote", "noch hochladen"], moodle: ["Moodle", "auf Moodle", "noch hochladen"], andere: ["Anderes", "verteilt", "noch verteilen"] };
+const docDelivery = d => d.delivery != null ? d.delivery : (isKbsDoc(d) ? "teams" : "");
+const docDelivered = d => d.delivered != null ? !!d.delivered : !!d.onTeams;
+const docOpen = d => !!docDelivery(d) && !docDelivered(d);
+const deliveryName = d => { const k = docDelivery(d); return k === "andere" ? (d.deliveryOther || "Anderes") : (DELIVERY[k]?.[0] || ""); };
+const teamsChip = d => { const k = docDelivery(d); if(!k) return ""; const done = docDelivered(d), lab = DELIVERY[k] || DELIVERY.andere; const name = k === "andere" && d.deliveryOther ? d.deliveryOther + ": " : k === "andere" ? "" : ""; return `<button type="button" class="chip ${done ? "ok" : "warn"}" style="border:0;cursor:pointer" data-teams="${d.id}" title="${esc(deliveryName(d))} · klicken zum Umschalten">${done ? "✓ " : ""}${esc(name)}${done ? lab[1] : lab[2]}${k === "papier" ? " (Papier)" : ""}</button>`; };
+const docComment = d => d.comment ? `<span class="dcom">${esc(d.comment)}</span>` : "";
 function lessonStatus(o, docs, tasks){
   if(o.cancelled) return { cls: "neutral", text: "fällt aus", open: [] };
   const open = [];
-  if(areaOf(o.ev) === "kbs" && !o.plan.topic && !o.plan.notes) open.push("Planung fehlt");
-  const nt = docs.filter(d => isKbsDoc(d) && !d.onTeams).length;
-  if(nt) open.push(`${nt} Dok. nicht auf Teams`);
+  if(areaOf(o.ev) === "kbs" && !o.plan.topic && !planItems(o.plan).length) open.push("Planung fehlt");
+  const nt = docs.filter(docOpen).length;
+  if(nt) open.push(`${nt} Dok. noch nicht bei den SuS`);
   const ot = tasks.filter(t => !t.done).length;
-  if(ot) open.push(`${ot} Aufgabe${ot > 1 ? "n" : ""} offen`);
+  if(ot) open.push(`${ot} Vorbereitung${ot > 1 ? "en" : ""} offen`);
   if(!open.length && o.plan.ready) return { cls: "ok", text: "✓ vorbereitet", open };
   if(!open.length) return { cls: "ok", text: "nichts offen", open };
   return { cls: "warn", text: open.join(" · "), open };
 }
+/* ---------- Lektion: Vorbereitung + Ablauf ---------- */
+function planItems(plan){
+  if(Array.isArray(plan?.items)) return plan.items;
+  return String(plan?.notes || "").split(/\r?\n/).map(t => t.trim()).filter(Boolean).map((t, i) => ({ id: "n" + i, text: t, done: false }));
+}
+function nextOccOf(ev, day){ return occurrences(ds(addDays(pd(day), 1)), ds(addDays(pd(day), 180)), true).find(o => o.ev.id === ev.id && !o.cancelled); }
+async function moveItems(evId, day, ids, tEvId, tDay){
+  const ev = get(evId); if(!ev) return;
+  const plans = { ...(ev.plans || {}) };
+  const cur = { ...(plans[day] || {}) };
+  const items = planItems(cur).map(x => ({ ...x }));
+  const moving = items.filter(x => ids.includes(x.id));
+  moving.forEach(x => { x.movedTo = tDay; });
+  cur.items = items; delete cur.notes; plans[day] = cur;
+  const add = moving.map(x => ({ id: uid(), text: x.text, done: false, from: day }));
+  const addTo = p => { const tp = { ...(p || {}) }; tp.items = [...planItems(tp), ...add]; delete tp.notes; tp.ready = false; return tp; };
+  if(tEvId === evId){ plans[tDay] = addTo(plans[tDay]); await save({ ...ev, plans }); }
+  else { await save({ ...ev, plans }); const tev = get(tEvId); if(tev){ const tPlans = { ...(tev.plans || {}) }; tPlans[tDay] = addTo(tPlans[tDay]); await save({ ...tev, plans: tPlans }); } }
+  toast(`${moving.length} Punkt${moving.length > 1 ? "e" : ""} auf ${fmtD(tDay)} verschoben`);
+}
+async function toggleItem(evId, day, itemId, done){
+  const ev = get(evId); if(!ev) return;
+  const plans = { ...(ev.plans || {}) }; const cur = { ...(plans[day] || {}) };
+  cur.items = planItems(cur).map(x => x.id === itemId ? { ...x, done } : x); delete cur.notes; plans[day] = cur;
+  await save({ ...ev, plans });
+}
+function itemRow(x, evId, day){
+  if(x.movedTo) return `<div class="lrow moved"><span class="ib">↷</span><span class="t">${esc(x.text)}</span><span class="chip neutral">→ ${fmtD(x.movedTo)}</span></div>`;
+  return `<label class="lrow ${x.done ? "done" : ""}"><input type="checkbox" data-item="${evId}|${day}|${x.id}" ${x.done ? "checked" : ""}><span class="t">${esc(x.text)}</span>${x.from ? `<span class="chip neutral">aus ${fmtD(x.from)}</span>` : ""}</label>`;
+}
 function lessonCard(o, docs, tasks){
   const c = ctxOf(o.ev), st = lessonStatus(o, docs, tasks);
   const time = o.ev.start ? `${o.ev.start}${o.ev.end ? "–" + o.ev.end : ""}` : "";
+  const items = planItems(o.plan), live = items.filter(x => !x.movedTo), doneN = live.filter(x => x.done).length;
+  const openLive = live.filter(x => !x.done);
+  const nxt = openLive.length && o.day <= TODAY() ? nextOccOf(o.ev, o.day) : null;
+  const kbs = areaOf(o.ev) === "kbs";
+  const tb = topicForOcc(o);
   return `<div class="lesson tone ${o.cancelled ? "cancel" : ""}"${tAttr(o.ev)}>
     <div class="lh">${time ? `<span class="tm">${time}</span>` : ""}<b>${esc(o.ev.title)}</b>${o.ev.location ? `<span class="lm">${esc(o.ev.location)}</span>` : ""}<span class="chip ${st.cls}">${esc(st.text)}</span>
-      <span style="flex:1"></span><button type="button" class="btn small" data-occ="${o.ev.id}|${o.day}">${areaOf(o.ev) !== "kbs" ? "Notizen" : o.plan.topic || o.plan.notes ? "Planung bearbeiten" : "Stunde planen"}</button>${c ? `<button type="button" class="btn small" data-day="${c.id}|${o.day}">+ Dokument / Aufgabe</button>` : ""}</div>
-    ${(() => { const tb = topicForOcc(o); return tb.length ? `<div class="row" style="gap:6px">${tb.map(t => `<button type="button" class="topicchip" style="--th:${topicHue(t)};border:0;cursor:pointer" data-topic="${t.id}">▤ ${esc(t.title)}</button>`).join("")}</div>` : ""; })()}
+      <span style="flex:1"></span><button type="button" class="btn small" data-occ="${o.ev.id}|${o.day}">${kbs ? "Stunde planen" : "Bearbeiten"}</button></div>
+    ${tb.length ? `<div class="row" style="gap:6px">${tb.map(t => `<button type="button" class="topicchip" style="--th:${topicHue(t)};border:0;cursor:pointer" data-topic="${t.id}">▤ ${esc(t.title)}</button>`).join("")}</div>` : ""}
     ${o.plan.topic ? `<div class="ltopic">${esc(o.plan.topic)}</div>` : ""}
-    ${o.plan.notes ? `<div class="lnotes">${esc(o.plan.notes)}</div>` : ""}
+    <div class="lcols">
+      <div class="lcol"><div class="section-h">Vorbereitung</div>
+        ${tasks.map(t => `<label class="lrow ${t.done ? "done" : ""}"><input type="checkbox" data-done="${t.id}" ${t.done ? "checked" : ""}><span class="t">${esc(t.title)}</span>${t.forClass ? `<span class="chip neutral">für SuS</span>` : ""}${t.due && t.due !== o.day ? dueChip(t.due, t.done) : ""}</label>`).join("")}
+        ${docs.map(d => `<div class="lrow"><span class="ib">📄</span><span class="t">${esc(d.title)}</span>${teamsChip(d)}${docComment(d)}<span style="flex:1"></span>${d.assetId ? `<button type="button" class="btn small" data-openf="${d.id}">Öffnen</button>` : d.url ? `<a class="btn small" href="${esc(d.url)}" target="_blank" rel="noopener">Öffnen</a>` : ""}</div>`).join("")}
+        ${!tasks.length && !docs.length ? `<div class="empty" style="font-size:.84rem">Nichts vorzubereiten.</div>` : ""}
+      </div>
+      <div class="lcol"><div class="section-h">Ablauf der Stunde${live.length ? ` · ${doneN}/${live.length}` : ""}</div>
+        ${items.map(x => itemRow(x, o.ev.id, o.day)).join("") || `<div class="empty" style="font-size:.84rem">${kbs ? "Noch kein Ablauf geplant." : "–"}</div>`}
+        ${nxt ? `<button type="button" class="btn small" style="margin-top:6px" data-carry="${o.ev.id}|${o.day}|${nxt.ev.id}|${nxt.day}">${openLive.length} nicht geschafft → ${fmtD(nxt.day)}</button>` : ""}
+      </div>
+    </div>
     ${o.plan.url ? `<div><a class="btn small" href="${esc(o.plan.url)}" target="_blank" rel="noopener">Material öffnen</a></div>` : ""}
-    ${docs.length ? `<div class="lsec"><div class="section-h">Dokumente</div>${docs.map(d => `<div class="lrow"><span class="t">${esc(d.title)}</span>${teamsChip(d)}<span style="flex:1"></span>${d.assetId ? `<button type="button" class="btn small" data-openf="${d.id}">Öffnen</button>` : d.url ? `<a class="btn small" href="${esc(d.url)}" target="_blank" rel="noopener">Öffnen</a>` : ""}</div>`).join("")}</div>` : ""}
-    ${tasks.length ? `<div class="lsec"><div class="section-h">Aufgaben</div>${tasks.map(t => `<label class="lrow ${t.done ? "done" : ""}"><input type="checkbox" data-done="${t.id}" ${t.done ? "checked" : ""}><span class="t">${esc(t.title)}</span>${t.forClass ? `<span class="chip neutral">für SuS</span>` : ""}${t.due && t.due !== o.day ? dueChip(t.due, t.done) : ""}</label>`).join("")}</div>` : ""}
   </div>`;
 }
+function openLesson(occ){
+  S.modal = null;
+  const ev = get(occ.ev.id) || occ.ev, day = occ.day, c = ctxOf(ev);
+  const plan = { ...((ev.plans || {})[day] || {}) };
+  let items = planItems(plan).map(x => ({ ...x }));
+  const later = c ? occurrences(ds(addDays(pd(day), 1)), ds(addDays(pd(day), 180)), true).filter(o => o.ev.ctx === c.id && !o.cancelled).slice(0, 15) : [];
+  const sameNext = later.find(o => o.ev.id === ev.id);
+  const root = $("#modalRoot");
+  root.innerHTML = `<div class="ov"><form class="modal" id="lform" style="width:min(680px,100%)">
+    <div class="head"><div><h2>${esc(ev.title)}</h2><div class="sub" style="color:var(--muted);font-size:.9rem">${fmtDL(day)}${ev.start ? ` · ${ev.start}${ev.end ? "–"+ev.end : ""}` : ""}${c ? ` · ${esc(c.name)}` : ""}</div></div><button type="button" class="btn ghost" id="lclose" aria-label="Schliessen">✕</button></div>
+    <div class="form"><label class="full">Thema dieser Stunde<input id="l-topic" name="topic" value="${esc(plan.topic)}" placeholder="z. B. Quadratische Gleichungen: Wurzel ziehen"></label></div>
+    ${c ? `<section class="psec prep"><h3><span class="pn">1</span>Vorbereitung</h3><p class="hint">Was du vor der Stunde erledigen oder organisieren musst. Nur das zählt für «vorbereitet».</p>
+      <div id="lPrep"></div>
+      <div class="row"><input class="inp" id="lt-new" placeholder="z. B. Arbeitsblatt kopieren, Video auf Teams stellen" style="flex:1;min-width:200px"><label class="cb" style="font-size:.82rem;color:var(--muted)"><input type="checkbox" id="lt-sus"> für SuS</label><button type="button" class="btn" id="lt-add">+ Aufgabe</button></div>
+      <div class="row"><input class="inp" id="ld-title" placeholder="Dokument (Titel)" style="flex:1;min-width:130px"><input class="inp" id="ld-url" type="url" placeholder="Link aus Teams/OneDrive" style="flex:1;min-width:150px"><select class="inp" id="ld-dlv" aria-label="Weg zu den SuS">${DELIVERY_OPTS.map(([k,l]) => `<option value="${k}" ${k === (c?.area === "kbs" ? "teams" : "") ? "selected" : ""}>${l}</option>`).join("")}</select><button type="button" class="btn" id="ld-add">+ Link</button><label class="btn" style="cursor:pointer">+ Datei<input type="file" id="ld-file" multiple hidden></label></div>
+    </section>` : ""}
+    <section class="psec run"><h3><span class="pn">2</span>Ablauf der Stunde</h3><p class="hint">Was du mit den SuS machst. In der Stunde abhaken, Nicht-Geschafftes in eine spätere Stunde verschieben.</p>
+      <div id="lItems"></div>
+      <div class="row"><input class="inp" id="li-new" placeholder="Nächster Schritt, z. B. Übungen Buch S. 112 (Enter)" style="flex:1"><button type="button" class="btn" id="li-add">+ Schritt</button></div>
+      ${later.length ? `<div class="row carry"><span style="font-size:.85rem">Nicht Abgehaktes verschieben auf</span><select class="inp" id="carryTo">${later.map(o => `<option value="${o.ev.id}|${o.day}" ${o === (sameNext || later[0]) ? "selected" : ""}>${fmtD(o.day)} · ${esc(o.ev.title)}${o === sameNext ? " (nächste dieser Lektion)" : ""}</option>`).join("")}</select><button type="button" class="btn" id="carryGo">Verschieben</button></div>` : ""}
+    </section>
+    <div class="form">
+      <label class="full">Material-Link (Teams, OneNote …)<input id="l-url" name="url" type="url" value="${esc(plan.url)}"></label>
+      <label class="cb"><input type="checkbox" id="l-ready" name="ready" ${plan.ready ? "checked" : ""}> Stunde fertig vorbereitet</label>
+      <label class="cb"><input type="checkbox" id="l-cancel" name="cancelled" ${plan.cancelled ? "checked" : ""}> Fällt aus</label>
+    </div>
+    <div class="foot"><div class="row"><button type="button" class="btn" id="ledit">Ganze Serie bearbeiten</button>${c?.teamsUrl ? `<a class="btn" href="${esc(c.teamsUrl)}" target="_blank" rel="noopener">In Teams öffnen</a>` : ""}</div>
+    <div class="row"><button type="button" class="btn" id="lcancel">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div>
+  </form></div>`;
+  const form = $("#lform");
+  const close = () => { root.innerHTML = ""; S.modal = null; const r = S.returnTo; S.returnTo = null; if(r) r(); };
+  $("#lclose").onclick = close; $("#lcancel").onclick = close;
+  $(".ov").addEventListener("mousedown", e => { if(e.target.classList.contains("ov")) close(); });
+  const buildPlan = () => {
+    const p = { topic: form.elements.topic.value.trim(), items: items.filter(x => x.text.trim()), url: form.elements.url.value.trim(), cancelled: form.elements.cancelled.checked, ready: form.elements.ready.checked };
+    return p;
+  };
+  const savePlan = async () => {
+    const cur = get(ev.id) || ev; const plans = { ...(cur.plans || {}) }; const p = buildPlan();
+    if(!p.topic && !p.items.length && !p.url && !p.cancelled && !p.ready) delete plans[day]; else plans[day] = p;
+    await save({ ...cur, plans });
+  };
+  $("#ledit").onclick = async () => { await savePlan(); root.innerHTML = ""; openForm("event", get(ev.id)); };
+  // --- Ablauf ---
+  const renderItems = () => {
+    const box = $("#lItems");
+    box.innerHTML = items.length ? items.map((x, i) => x.movedTo
+      ? `<div class="lrow moved"><span class="ib">↷</span><span class="t">${esc(x.text)}</span><span class="chip neutral">→ ${fmtD(x.movedTo)}</span><button type="button" class="btn small ghost" data-idel="${i}" aria-label="Entfernen">✕</button></div>`
+      : `<div class="lrow irow"><input type="checkbox" data-idone="${i}" ${x.done ? "checked" : ""} aria-label="Erledigt"><input class="inp itext ${x.done ? "isdone" : ""}" data-itext="${i}" value="${esc(x.text)}">${x.from ? `<span class="chip neutral">aus ${fmtD(x.from)}</span>` : ""}<button type="button" class="btn small ghost" data-iup="${i}" aria-label="Nach oben" ${i ? "" : "disabled"}>↑</button><button type="button" class="btn small ghost" data-idel="${i}" aria-label="Entfernen">✕</button></div>`).join("")
+      : `<div class="empty" style="font-size:.85rem">Noch keine Schritte. Schreib unten den ersten und drück Enter.</div>`;
+    box.querySelectorAll("[data-idone]").forEach(cb => cb.onchange = () => { items[cb.dataset.idone].done = cb.checked; renderItems(); });
+    box.querySelectorAll("[data-itext]").forEach(inp => inp.oninput = () => { items[inp.dataset.itext].text = inp.value; });
+    box.querySelectorAll("[data-idel]").forEach(b => b.onclick = () => { items.splice(Number(b.dataset.idel), 1); renderItems(); });
+    box.querySelectorAll("[data-iup]").forEach(b => b.onclick = () => { const i = Number(b.dataset.iup); [items[i-1], items[i]] = [items[i], items[i-1]]; renderItems(); });
+  };
+  const addItem = () => { const inp = $("#li-new"); const t = inp.value.trim(); if(!t) return; items.push({ id: uid(), text: t, done: false }); inp.value = ""; renderItems(); inp.focus(); };
+  $("#li-add").onclick = addItem;
+  $("#li-new").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); addItem(); } };
+  renderItems();
+  const cg = $("#carryGo");
+  if(cg) cg.onclick = async () => {
+    const ids = items.filter(x => !x.done && !x.movedTo && x.text.trim()).map(x => x.id);
+    if(!ids.length){ toast("Alles abgehakt, es gibt nichts zu verschieben."); return; }
+    const [tEv, tDay] = $("#carryTo").value.split("|");
+    await savePlan(); await moveItems(ev.id, day, ids, tEv, tDay);
+    root.innerHTML = ""; S.modal = null; S.returnTo = null;
+  };
+  // --- Vorbereitung ---
+  if(c){
+    const prepTasks = () => all("task").filter(t => t.ctx === c.id && (t.day === day || (!t.day && t.due === day))).sort((a,b) => a.done - b.done || (a.created||0) - (b.created||0));
+    const prepDocs = () => all("doc").filter(d => d.ctx === c.id && d.day === day);
+    const renderPrep = () => {
+      const box = $("#lPrep"); if(!box) return;
+      const ts = prepTasks(), dcs = prepDocs();
+      box.innerHTML = (ts.map(t => `<label class="lrow ${t.done ? "done" : ""}"><input type="checkbox" data-pdone="${t.id}" ${t.done ? "checked" : ""}><span class="t">${esc(t.title)}</span>${t.forClass ? `<span class="chip neutral">für SuS</span>` : ""}${t.due && t.due !== day ? dueChip(t.due, t.done) : ""}</label>`).join("") +
+        dcs.map(d => `<div class="drow"><div class="lrow"><span class="ib">📄</span><span class="t">${esc(d.title)}</span>${teamsChip(d)}</div>
+          <div class="row" style="padding-left:26px;gap:6px"><select class="inp sm" data-pdlv="${d.id}" aria-label="Weg zu den SuS">${DELIVERY_OPTS.map(([k,l]) => `<option value="${k}" ${docDelivery(d) === k ? "selected" : ""}>${l}</option>`).join("")}</select>${docDelivery(d) === "andere" ? `<input class="inp sm" data-pdoth="${d.id}" value="${esc(d.deliveryOther)}" placeholder="wie?" style="width:120px">` : ""}<input class="inp sm" data-pcom="${d.id}" value="${esc(d.comment)}" placeholder="Kommentar" style="flex:1;min-width:120px"></div></div>`).join("")) || `<div class="empty" style="font-size:.85rem">Noch nichts. Erfasse unten, was vor der Stunde zu tun ist.</div>`;
+      box.querySelectorAll("[data-pdlv]").forEach(sel => sel.onchange = async () => { const d = get(sel.dataset.pdlv); if(d){ await save({ ...d, delivery: sel.value }); renderPrep(); } });
+      box.querySelectorAll("[data-pdoth]").forEach(inp => inp.onchange = async () => { const d = get(inp.dataset.pdoth); if(d) await save({ ...d, deliveryOther: inp.value.trim() }); });
+      box.querySelectorAll("[data-pcom]").forEach(inp => inp.onchange = async () => { const d = get(inp.dataset.pcom); if(d) await save({ ...d, comment: inp.value.trim() }); });
+      box.querySelectorAll("[data-pdone]").forEach(cb => cb.onchange = async () => { const t = get(cb.dataset.pdone); if(t){ await save({ ...t, done: cb.checked, doneAt: cb.checked ? TODAY() : "" }); renderPrep(); } });
+      box.querySelectorAll("[data-teams]").forEach(b => b.onclick = async e => { e.preventDefault(); const d = get(b.dataset.teams); if(d){ await save({ ...d, delivery: docDelivery(d), delivered: !docDelivered(d) }); renderPrep(); } });
+    };
+    const addTask = async () => { const inp = $("#lt-new"); const t = inp.value.trim(); if(!t) return; inp.value = ""; await save({ id: uid(), kind: "task", created: Date.now(), title: t, ctx: c.id, day, due: "", prio: "normal", remind: "1", done: false, forClass: $("#lt-sus").checked }); renderPrep(); inp.focus(); };
+    $("#lt-add").onclick = addTask;
+    $("#lt-new").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); addTask(); } };
+    $("#ld-add").onclick = async () => { const ti = $("#ld-title").value.trim(), u = $("#ld-url").value.trim(); if(!ti && !u) return; $("#ld-title").value = ""; $("#ld-url").value = ""; await save({ id: uid(), kind: "doc", created: Date.now(), title: ti || u, url: u, ctx: c.id, day, tag: "Material", notes: "", delivery: $("#ld-dlv").value, delivered: false }); renderPrep(); };
+    $("#ld-file").onchange = async () => { await uploadFiles([...$("#ld-file").files], { ctx: c.id, day, delivery: $("#ld-dlv").value }); renderPrep(); };
+    renderPrep();
+  }
+  form.onsubmit = async e => { e.preventDefault(); await savePlan(); close(); };
+  setTimeout(() => $("#l-topic")?.focus(), 30);
+}
+
 function vWeekDetail(mon, n = 7, big = false){
   const today = TODAY(), from = ds(mon), to = ds(addDays(mon, n - 1));
   const occ = occurrences(from, to);
@@ -1152,7 +1283,9 @@ function bindCommon(m, ret){
   m.querySelectorAll("[data-step]").forEach(b => b.onclick = () => { const [id, i] = b.dataset.step.split("|"); const e = get(id); if(!e) return; const steps = (e.steps||[]).map((s, k) => k == i ? { ...s, done: !s.done } : s); save({ ...e, steps }); });
   m.querySelectorAll("[data-dl]").forEach(b => b.onclick = () => openFile(get(b.dataset.dl), true));
   m.querySelectorAll("[data-openf]").forEach(b => b.onclick = () => openFile(get(b.dataset.openf), false));
-  m.querySelectorAll("[data-teams]").forEach(b => b.onclick = e => { e.stopPropagation(); const d = get(b.dataset.teams); if(d) save({ ...d, onTeams: !d.onTeams }); });
+  m.querySelectorAll("[data-item]").forEach(cb => cb.onchange = () => { const [ev, d, id] = cb.dataset.item.split("|"); toggleItem(ev, d, id, cb.checked); });
+  m.querySelectorAll("[data-carry]").forEach(b => b.onclick = () => { const [ev, d, tEv, tDay] = b.dataset.carry.split("|"); const e = get(ev); if(!e) return; const ids = planItems((e.plans || {})[d]).filter(x => !x.done && !x.movedTo).map(x => x.id); moveItems(ev, d, ids, tEv, tDay); });
+  m.querySelectorAll("[data-teams]").forEach(b => b.onclick = e => { e.stopPropagation(); const d = get(b.dataset.teams); if(d) save({ ...d, delivery: docDelivery(d), delivered: !docDelivered(d) }); });
   m.querySelectorAll("[data-topic]").forEach(el => { const go = () => openTopic(el.dataset.topic); el.onclick = go; el.onkeydown = e => { if(e.key === "Enter") go(); }; });
   m.querySelectorAll("[data-day]").forEach(el => { const go = () => { const [c, d] = el.dataset.day.split("|"); openDay(c, d); }; el.onclick = go; el.onkeydown = e => { if(e.key === "Enter") go(); }; });
   m.querySelectorAll("[data-ndel]").forEach(b => b.onclick = () => { if(b.dataset.sure) remove(b.dataset.ndel); else { b.dataset.sure = 1; b.textContent = "Sicher?"; } });
@@ -1162,7 +1295,7 @@ function docRow(d){
   const isFile = !!d.assetId;
   const href = isFile ? "" : d.url;
   return `<div class="li"><span class="chip neutral">${esc(d.tag || (isFile ? "Datei" : "Link"))}</span>
-    <div class="clickable" data-docedit="${d.id}"><div class="t">${esc(d.title)}</div><div class="m">${ctxChip(d)}${teamsChip(d)}${isFile ? `<span>${esc(d.fileName || "")}${d.size ? " · " + Math.max(1, Math.round(d.size/1024)) + " KB" : ""}</span>` : ""}</div></div>
+    <div class="clickable" data-docedit="${d.id}"><div class="t">${esc(d.title)}</div><div class="m">${ctxChip(d)}${teamsChip(d)}${docComment(d)}${isFile ? `<span>${esc(d.fileName || "")}${d.size ? " · " + Math.max(1, Math.round(d.size/1024)) + " KB" : ""}</span>` : ""}</div></div>
     <div class="row">${isFile ? `<button type="button" class="btn small" data-openf="${d.id}">Öffnen</button>` : ""}${href ? `<a class="btn small" href="${esc(href)}" target="_blank" rel="noopener">Öffnen</a>` : ""}${isFile && downloads ? `<button type="button" class="btn small" data-dl="${d.id}">Herunterladen</button>` : ""}${ctxOf(d)?.teamsUrl ? `<a class="btn small" href="${esc(ctxOf(d).teamsUrl)}" target="_blank" rel="noopener">Teams</a>` : ""}</div></div>`;
 }
 function vDokumente(){
