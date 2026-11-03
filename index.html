@@ -252,6 +252,9 @@ textarea.inp{width:100%;min-height:90px;resize:vertical}
 .dcom{font-size:.78rem;color:var(--muted);font-style:italic}
 .drow{padding:2px 0 6px;border-bottom:1px dashed var(--line)}
 .inp.sm{padding:3px 6px;font-size:.8rem}
+.dnote{border:1px solid var(--line);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.dnote .txt{white-space:pre-wrap;overflow-wrap:anywhere}
+.dumpcard{border-top:4px solid var(--accent)}
 /* Modal */
 .ov{position:fixed;inset:0;background:rgba(10,12,20,.45);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;z-index:10;overflow:auto}
 .modal{background:var(--surface);border-radius:14px;width:min(560px,100%);padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:14px}
@@ -597,8 +600,8 @@ const SCHEMA = {
     ["name","Name","text","full"], ["area","Bereich","select",null,[["kbs","KBS (Unterricht)"],["uni","Uni (Studium)"],["privat","Privat / Organisatorisches"]]], ["short","Kürzel","text"], ["shade","Farbton","select",null,[["0","Ton 1"],["1","Ton 2"],["2","Ton 3"],["3","Ton 4"],["4","Ton 5"],["5","Ton 6"]]],
     ["teamsUrl","Teams-Link (Team oder Kanal)","url","full"], ["onenoteUrl","OneNote-/Moodle-Link","url","full"], ["notes","Kurzbeschreibung (Lehrmittel, Raum …)","textarea","full"] ] },
   event: { label: "Termin / Lektion", fields: [
-    ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["date","Datum (erstes)","date"], ["repeat","Wiederholung","select",null,[["none","einmalig"],["weekly","jede Woche"],["biweekly","alle 2 Wochen"]]],
-    ["start","Beginn","time"], ["end","Ende","time"], ["until","Wiederholen bis","date"], ["location","Ort / Raum","text"],
+    ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["date","Datum (erster Termin)","date"], ["repeat","Wiederholung","select",null,[["none","einmalig"],["weekly","jede Woche"],["biweekly","alle 2 Wochen"]]],
+    ["start","Beginn (Uhrzeit)","time"], ["end","Ende (Uhrzeit, optional)","time"], ["until","Wiederholen bis (leer lassen = kein Enddatum)","date"], ["location","Ort / Raum","text"],
     ["skipHolidays","In Ferien / freien Zeiten automatisch auslassen","checkbox","full"], ["notes","Notizen","textarea","full"] ] },
   task: { label: "Aufgabe / Auftrag", fields: [
     ["title","Was ist zu tun?","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["due","Fällig am","date"], ["day","Geplant am (Tag im Jahresplan)","date"], ["remind","Erinnern","select",null,[["","nicht"],["0","am Tag selbst"],["1","1 Tag vorher"],["3","3 Tage vorher"],["7","1 Woche vorher"],["14","2 Wochen vorher"]]],
@@ -610,8 +613,8 @@ const SCHEMA = {
     ["notes","Notizen","textarea","full"] ] },
   student: { label: "Schüler:in", fields: [ ["name","Name","text","full"], ["ctx","Klasse","ctx","full"], ["notes","Notizen (Lernstand, Absprachen …)","textarea","full"] ] },
   doc: { label: "Dokument / Link", fields: [ ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["url","Link (z. B. Teams- oder OneDrive-Datei)","url","full"], ["day","Abgelegt am (Tag im Jahresplan)","date"], ["delivery","An die SuS über","select",null,DELIVERY_OPTS], ["deliveryOther","Bei «Anderes»: wie?","text"], ["delivered","Schon erledigt (hochgeladen / kopiert / verteilt)","checkbox"], ["comment","Kommentar (z. B. «Lösungen erst nach der Stunde»)","text","full"], ["tag","Art","select",null,[["Material","Material"],["Prüfung","Prüfung"],["Lösung","Lösung"],["Auftrag","Auftrag"],["Uni","Uni-Unterlage"],["Sonstiges","Sonstiges"]]], ["notes","Notizen","textarea","full"] ] },
-  topic: { label: "Themenblock", fields: [ ["title","Thema (z. B. Quadratische Gleichungen)","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["ev","Gilt für","evsel","full"], ["start","Von","date"], ["end","Bis","date"], ["notes","Lernziele / Notizen","textarea","full"] ] },
-  period: { label: "Zeitraum", fields: [ ["title","Titel (z. B. Herbstferien)","text","full"], ["type","Art","select",null,[["semester","Semester / Schuljahr"],["frei","Ferien / unterrichtsfrei"],["pruef","Prüfungsphase"],["sonst","Sonstiges"]]], ["area","Gilt für","select",null,[["beide","Uni und KBS"],["uni","Uni"],["kbs","KBS"]]], ["start","Von","date"], ["end","Bis","date"] ] }
+  topic: { label: "Themenblock", fields: [ ["title","Thema (z. B. Quadratische Gleichungen)","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["ev","Gilt für","evsel","full"], ["start","Von","date"], ["end","Bis (leer = bis Ende Schuljahr)","date"], ["notes","Lernziele / Notizen","textarea","full"] ] },
+  period: { label: "Zeitraum", fields: [ ["title","Titel (z. B. Herbstferien)","text","full"], ["type","Art","select",null,[["semester","Semester / Schuljahr"],["frei","Ferien / unterrichtsfrei"],["pruef","Prüfungsphase"],["sonst","Sonstiges"]]], ["area","Gilt für","select",null,[["beide","Uni und KBS"],["uni","Uni"],["kbs","KBS"]]], ["start","Von","date"], ["end","Bis (leer = bis Ende Schuljahr)","date"] ] }
 };
 const EXAM_STEPS = {
   kbs: ["Checkliste für SuS", "Lernkontrolle + Lösungen", "Prüfung + Lösungen", "Auf Teams gestellt", "Korrigiert & Noten eingetragen"],
@@ -663,6 +666,8 @@ function openForm(kind, item = {}, opts = {}){
     else { del.dataset.sure = 1; del.textContent = "Wirklich löschen?"; }
   };
   opts.onOpen?.(root, it);
+  const rep = root.querySelector("#f-repeat"), untilL = root.querySelector("#f-until")?.closest("label");
+  if(rep && untilL){ const upd = () => { untilL.style.display = rep.value === "none" ? "none" : ""; }; rep.addEventListener("change", upd); upd(); }
   const evSel = root.querySelector("[data-evsel]"), ctxSel = root.querySelector("#f-ctx");
   if(evSel && ctxSel) ctxSel.addEventListener("change", () => { evSel.innerHTML = evOptions(ctxSel.value, ""); });
   $("#mform").onsubmit = async e => {
@@ -670,6 +675,7 @@ function openForm(kind, item = {}, opts = {}){
     const f = e.target;
     for(const [k,,t] of sch.fields){ const el = f.elements[k]; it[k] = t === "checkbox" ? el.checked : el.value.trim(); }
     opts.beforeSave?.(it, f);
+    if((kind === "topic" || kind === "period") && it.start && !it.end) it.end = schoolYear().to;
     if(kind === "exam" && !it.steps){ const a = it.ctx ? areaOf({ctx: it.ctx}) : "uni"; it.steps = EXAM_STEPS[a].map(t => ({ t, done: false })); }
     if(isNew){ it.id = uid(); it.kind = kind; it.created = Date.now(); }
     close();
@@ -685,7 +691,7 @@ function newMenu(){
   <div class="list">${opts.map(([k,l,s]) => `<div class="li clickable" data-k="${k}" tabindex="0" style="grid-template-columns:1fr auto"><div><div class="t">${l}</div><div class="m">${s}</div></div><span>›</span></div>`).join("")}</div></div></div>`;
   $("#nclose").onclick = () => root.innerHTML = "";
   $(".ov").addEventListener("mousedown", e => { if(e.target.classList.contains("ov")) root.innerHTML = ""; });
-  root.querySelectorAll("[data-k]").forEach(el => { const go = () => { const k = el.dataset.k; root.innerHTML = ""; k === "doc" ? openDocForm({}) : k === "note" ? (location.hash = "notizen") : openForm(k, defaultsFor(k)); }; el.onclick = go; el.onkeydown = e => { if(e.key==="Enter") go(); }; });
+  root.querySelectorAll("[data-k]").forEach(el => { const go = () => { const k = el.dataset.k; root.innerHTML = ""; k === "doc" ? openDocForm({}) : k === "note" ? (location.hash = "uebersicht", setTimeout(() => $("#dump-t")?.focus(), 60)) : openForm(k, defaultsFor(k)); }; el.onclick = go; el.onkeydown = e => { if(e.key==="Enter") go(); }; });
 }
 function defaultsFor(kind){
   const d = {};
@@ -941,7 +947,7 @@ ${big ? "" : `      <div class="wkdh"><div class="clickable" data-gotoweek="${s}
 
 /* ---------- Ansichten ---------- */
 const VIEWS = [
-  ["uebersicht","Übersicht"], ["kalender","Kalender"], ["aufgaben","Aufgaben"], ["notizen","Brain Dump"], ["pruefungen","Prüfungen"], ["klassen","Klassen & Kurse"], ["dokumente","Dokumente"], ["sync","Sync & Backup"]
+  ["uebersicht","Übersicht"], ["kalender","Kalender"], ["aufgaben","Aufgaben"], ["pruefungen","Prüfungen"], ["klassen","Klassen & Kurse"], ["dokumente","Dokumente"], ["sync","Sync & Backup"]
 ];
 function renderNav(){
   const rem = reminders().length;
@@ -973,6 +979,68 @@ function newForView(kind){
   openForm(kind, defaultsFor(kind));
 }
 
+/* ---------- Brain Dump in der Übersicht ---------- */
+S.noteSel = S.noteSel || {};
+S.noteAs = S.noteAs || {};
+function nextOccsOf(cid, n = 2){
+  const today = TODAY(), now = new Date(), hm = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  return occurrences(today, ds(addDays(now, 200)), true).filter(o => o.ev.ctx === cid && !o.cancelled && (o.day > today || (o.ev.start && o.ev.start > hm))).slice(0, n);
+}
+async function assignNote(n, cid, day, as){
+  const c = get(cid); if(!c) return;
+  const [first, ...rest] = n.text.split(/\r?\n/);
+  if(as === "task"){
+    await save({ id: uid(), kind: "task", created: Date.now(), title: first.slice(0, 160), notes: rest.join("\n").trim(), ctx: cid, day, due: "", prio: "normal", remind: "1", done: false });
+    await remove(n.id);
+  } else if(as === "step" && day){
+    const o = occurrences(day, day, true).find(x => x.ev.ctx === cid);
+    if(!o){ await save({ ...n, ctx: cid, day }); toast(`An diesem Tag gibt es keine Lektion. Als Notiz abgelegt.`); return; }
+    const ev = get(o.ev.id); const plans = { ...(ev.plans || {}) }; const p = { ...(plans[day] || {}) };
+    p.items = [...planItems(p), ...n.text.split(/\r?\n/).map(t => t.trim()).filter(Boolean).map(t => ({ id: uid(), text: t, done: false }))]; delete p.notes; p.ready = false; plans[day] = p;
+    await save({ ...ev, plans }); await remove(n.id);
+  } else {
+    await save({ ...n, ctx: cid, day: day || "" });
+  }
+  delete S.noteSel[n.id]; delete S.noteAs[n.id];
+  const what = as === "task" ? "Als Vorbereitung" : as === "step" ? "Als Ablauf-Schritt" : day ? "Als Notiz" : "Als Idee";
+  toast(`${what} bei ${c.short || c.name}${day ? " am " + fmtD(day) : ""} abgelegt`);
+}
+function dumpNote(n){
+  const cid = S.noteSel[n.id] || "", c = cid ? get(cid) : null;
+  const as = S.noteAs[n.id] || "note";
+  const nx = c ? nextOccsOf(cid, 2) : [];
+  const word = c?.area === "kbs" ? "Lektion" : "Termin";
+  return `<div class="dnote">
+    <div class="txt">${esc(n.text)}</div>
+    <div class="row" style="gap:6px">
+      <select class="inp sm" data-dsel="${n.id}" aria-label="Klasse oder Kurs">${ctxOptions().map(([a,b]) => `<option value="${esc(a)}" ${cid === a ? "selected" : ""}>${esc(a ? b : "Zuordnen zu …")}</option>`).join("")}</select>
+      ${c ? `<select class="inp sm" data-das="${n.id}" aria-label="Ablegen als"><option value="note" ${as === "note" ? "selected" : ""}>als Notiz</option><option value="task" ${as === "task" ? "selected" : ""}>als Vorbereitung (Aufgabe)</option><option value="step" ${as === "step" ? "selected" : ""}>als Schritt im Ablauf</option></select>` : ""}
+      <span style="flex:1"></span>
+      ${!c ? `<button type="button" class="btn small" data-ntask="${n.id}">→ Aufgabe</button>` : ""}
+      <button type="button" class="btn small ghost" data-ndel="${n.id}">Löschen</button>
+    </div>
+    ${c ? `<div class="row" style="gap:6px">
+      ${nx[0] ? `<button type="button" class="btn small primary" data-dgo="${n.id}|${nx[0].day}">Nächste ${word} · ${fmtD(nx[0].day)}</button>` : ""}
+      ${nx[1] ? `<button type="button" class="btn small" data-dgo="${n.id}|${nx[1].day}">Übernächste · ${fmtD(nx[1].day)}</button>` : ""}
+      <label class="row" style="gap:4px;font-size:.8rem;color:var(--muted)">am <input type="date" class="inp sm" data-ddate="${n.id}"></label>
+      ${as !== "step" ? `<button type="button" class="btn small" data-dgo="${n.id}|">${as === "task" ? "ohne Datum" : "als Idee (ohne Datum)"}</button>` : ""}
+    </div>` : ""}
+  </div>`;
+}
+function dumpCard(){
+  const open = all("note").filter(n => !n.ctx).sort((a,b) => (b.created||0) - (a.created||0));
+  return `<div class="card dumpcard" style="margin-bottom:16px"><h2>Brain Dump <span class="count">${open.length ? open.length + " noch zuzuordnen" : ""}</span></h2>
+    ${dumpForm(false)}
+    ${open.length ? `<div class="grid" style="gap:8px;margin-top:12px">${open.map(dumpNote).join("")}</div>` : ""}
+  </div>`;
+}
+function bindDump(m){
+  m.querySelectorAll("[data-dsel]").forEach(sel => sel.onchange = () => { S.noteSel[sel.dataset.dsel] = sel.value; renderAll(); });
+  m.querySelectorAll("[data-das]").forEach(sel => sel.onchange = () => { S.noteAs[sel.dataset.das] = sel.value; renderAll(); });
+  m.querySelectorAll("[data-dgo]").forEach(b => b.onclick = () => { const [id, day] = b.dataset.dgo.split("|"); const n = get(id); if(n) assignNote(n, S.noteSel[id], day, S.noteAs[id] || "note"); });
+  m.querySelectorAll("[data-ddate]").forEach(inp => inp.onchange = () => { const n = get(inp.dataset.ddate); if(n && inp.value) assignNote(n, S.noteSel[n.id], inp.value, S.noteAs[n.id] || "note"); });
+}
+
 function vUebersicht(){
   const today = TODAY(), now = new Date();
   const mon = monday(now);
@@ -985,6 +1053,7 @@ function vUebersicht(){
   const dayCol = (s, label) => `<div><h3 style="margin-bottom:6px">${label} <span style="color:var(--muted);font-weight:500;font-family:var(--font-body);font-size:.85rem">${fmtD(s)}</span></h3>
     ${(ag[s] || []).length ? `<div class="grid" style="gap:6px">${ag[s].map(agendaBlock).join("")}</div>` : `<div class="empty">${isFreeFor(s,"kbs") && isFreeFor(s,"uni") ? "Frei" : "Keine Termine"}</div>`}</div>`;
   return pageHead(fmtDL(today), `KW ${isoWeek(now)}${sems.length ? " · " + sems.map(p => `${esc(p.title)}: Woche ${Math.floor(diffDays(p.start, today)/7)+1} von ${Math.ceil((diffDays(p.start,p.end)+1)/7)}`).join(" · ") : ""}`) +
+  dumpCard() +
   (rem.length ? `<div class="alerts">${rem.map(r => `<div class="alert ${r.sev}"><span class="dot" style="background:var(--${r.sev})"></span><div class="grow"><b>${esc(r.text)}</b> <span style="color:var(--muted)">· ${esc(r.sub)}</span></div><button type="button" class="btn small" data-edit="${r.id}">Ansehen</button></div>`).join("")}</div>` : "") +
   (S.items.size === 0 && S.mode !== "loading" ? `<div class="notice">Noch leer. Lege zuerst deine Klassen und Uni-Kurse an, dann die wöchentlichen Lektionen. Mit <b>+ Neu</b> geht alles.</div>` : "") +
   `<div class="grid g3">
@@ -996,9 +1065,7 @@ function vUebersicht(){
   </div>
   <div class="card" style="margin-top:16px"><h2>Diese Woche <a class="count" href="#kalender">zum Kalender</a></h2>
     <div class="week">${[...Array(7)].map((_, i) => { const d = addDays(mon, i), s = ds(d); const items = wk[s] || []; const bands = periodsOn(s).filter(p => p.type === "frei" || p.type === "pruef"); return `<div class="day ${s === today ? "today" : ""}"><div class="dh"><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b></div>${bands.map(p => `<div class="band ${p.type}" title="${esc(p.title)}">${esc(p.title)}</div>`).join("")}${items.map(agendaBlock).join("") || `<span class="empty" style="font-size:.78rem">–</span>`}</div>`; }).join("")}</div>
-  </div>` +
-  `<div class="grid g2" style="margin-top:16px"><div class="card"><h2>Brain Dump <a class="count" href="#notizen">alle Notizen</a></h2>${dumpForm(false)}</div>
-   <div class="card"><h2>Noch einzuordnen <span class="count">${all("note").filter(n => !n.ctx).length}</span></h2>${all("note").filter(n => !n.ctx).sort((a,b) => (b.created||0)-(a.created||0)).slice(0,3).map(n => `<div class="li" style="grid-template-columns:1fr auto"><div class="txt" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(n.text.length > 160 ? n.text.slice(0,160) + " …" : n.text)}</div><a class="btn small" href="#notizen">Zuordnen</a></div>`).join("") || `<div class="empty">Nichts offen.</div>`}</div></div>`;
+  </div>`;
 }
 
 function vKalender(){
@@ -1414,6 +1481,7 @@ function bindSync(){
 function route(){
   const h = (location.hash || "#uebersicht").slice(1);
   if(h.startsWith("klasse-")){ S.view = "klasse"; S.ctxId = h.slice(7); }
+  else if(h === "notizen"){ S.view = "uebersicht"; }
   else if(h === "jahr"){ S.view = "kalender"; S.calMode = "year"; }
   else S.view = VIEWS.some(v => v[0] === h) ? h : "uebersicht";
   renderAll(); window.scrollTo(0, 0);
@@ -1433,6 +1501,7 @@ function bindView(){
   const m = $("#main");
   m.querySelectorAll("[data-act=new]").forEach(b => b.onclick = () => newForView(b.dataset.newkind));
   bindCommon(m, null);
+  bindDump(m);
   m.querySelectorAll("[data-ctx]").forEach(el => { const go = () => location.hash = "klasse-" + el.dataset.ctx; el.onclick = go; el.onkeydown = e => { if(e.key === "Enter") go(); }; });
   m.querySelectorAll("[data-newk]").forEach(b => b.onclick = () => { const k = b.dataset.newk; k === "doc" ? openDocForm({}) : openForm(k, defaultsFor(k)); });
   m.querySelectorAll("[data-cal]").forEach(b => b.onclick = () => { S.calMode = b.dataset.cal; lsSet("planer.cal", S.calMode); renderAll(); });
