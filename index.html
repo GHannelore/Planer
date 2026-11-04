@@ -255,6 +255,23 @@ textarea.inp{width:100%;min-height:90px;resize:vertical}
 .dnote{border:1px solid var(--line);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
 .dnote .txt{white-space:pre-wrap;overflow-wrap:anywhere}
 .dumpcard{border-top:4px solid var(--accent)}
+.hint2{font-size:.8rem;color:var(--muted)}
+.star{border:0;background:none;padding:0 1px;font-size:1rem;color:var(--line);cursor:pointer;line-height:1}
+span.star{cursor:default}
+.star.on{color:#e0a106}
+.habits{border-collapse:collapse;width:100%;font-size:.85rem}
+.habits th{font-size:.72rem;color:var(--muted);font-weight:600;padding:2px 4px;text-align:center}
+.habits th span{font-weight:400}
+.habits th.td{color:var(--accent)}
+.habits td{padding:3px 4px;text-align:center}
+.habits td:first-child{text-align:left;white-space:nowrap}
+.hcell{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--bg);cursor:pointer;color:#fff;font-weight:700}
+.hcell.on{background:var(--priv);border-color:var(--priv)}
+.hcell.fut{opacity:.35;cursor:default}
+.streak{font-weight:600}
+.linkbtn{border:0;background:none;padding:0;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.linkbtn:hover{text-decoration:underline}
+.pquick{margin-top:6px}
 /* Modal */
 .ov{position:fixed;inset:0;background:rgba(10,12,20,.45);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;z-index:10;overflow:auto}
 .modal{background:var(--surface);border-radius:14px;width:min(560px,100%);padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:14px}
@@ -613,6 +630,9 @@ const SCHEMA = {
     ["notes","Notizen","textarea","full"] ] },
   student: { label: "Schüler:in", fields: [ ["name","Name","text","full"], ["ctx","Klasse","ctx","full"], ["notes","Notizen (Lernstand, Absprachen …)","textarea","full"] ] },
   doc: { label: "Dokument / Link", fields: [ ["title","Titel","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["url","Link (z. B. Teams- oder OneDrive-Datei)","url","full"], ["day","Abgelegt am (Tag im Jahresplan)","date"], ["delivery","An die SuS über","select",null,DELIVERY_OPTS], ["deliveryOther","Bei «Anderes»: wie?","text"], ["delivered","Schon erledigt (hochgeladen / kopiert / verteilt)","checkbox"], ["comment","Kommentar (z. B. «Lösungen erst nach der Stunde»)","text","full"], ["tag","Art","select",null,[["Material","Material"],["Prüfung","Prüfung"],["Lösung","Lösung"],["Auftrag","Auftrag"],["Uni","Uni-Unterlage"],["Sonstiges","Sonstiges"]]], ["notes","Notizen","textarea","full"] ] },
+  book: { label: "Buch", fields: [ ["title","Titel","text","full"], ["author","Autor:in","text"], ["status","Liste","select",null,[["want","Möchte ich lesen"],["read","Gelesen"]]], ["pages","Seiten","number"], ["stars","Sterne","select",null,[["0","–"],["1","★"],["2","★★"],["3","★★★"],["4","★★★★"],["5","★★★★★"]]], ["finished","Fertig gelesen am","date"], ["note","Notiz","textarea","full"] ] },
+  wish: { label: "Wunsch", fields: [ ["title","Was?","text","full"], ["price","Preis (ca.)","text"], ["url","Link","url"], ["note","Notiz","textarea","full"], ["done","Erfüllt","checkbox","full"] ] },
+  habit: { label: "Gewohnheit", fields: [ ["name","Name","text","full"] ] },
   topic: { label: "Themenblock", fields: [ ["title","Thema (z. B. Quadratische Gleichungen)","text","full"], ["ctx","Klasse / Kurs","ctx","full"], ["ev","Gilt für","evsel","full"], ["start","Von","date"], ["end","Bis (leer = bis Ende Schuljahr)","date"], ["notes","Lernziele / Notizen","textarea","full"] ] },
   period: { label: "Zeitraum", fields: [ ["title","Titel (z. B. Herbstferien)","text","full"], ["type","Art","select",null,[["semester","Semester / Schuljahr"],["frei","Ferien / unterrichtsfrei"],["pruef","Prüfungsphase"],["sonst","Sonstiges"]]], ["area","Gilt für","select",null,[["beide","Uni und KBS"],["uni","Uni"],["kbs","KBS"]]], ["start","Von","date"], ["end","Bis (leer = bis Ende Schuljahr)","date"] ] }
 };
@@ -686,7 +706,7 @@ function openForm(kind, item = {}, opts = {}){
 
 function newMenu(){
   const root = $("#modalRoot");
-  const opts = [["task","Aufgabe / Auftrag","Uni-Auftrag, Vorbereitung, Korrektur"],["event","Termin / Lektion","Einmalig oder wöchentlich"],["exam","Prüfung","Mit Erinnerung und Checkliste"],["topic","Themenblock","Zeitraum mit Thema, sammelt Dokumente"],["note","Notiz (Brain Dump)","Schnell notieren, später zuordnen"],["ctx","Klasse / Kurs","KBS-Klasse oder Uni-Veranstaltung"],["student","Schüler:in","Zu einer Klasse"],["doc","Dokument / Link","Datei hochladen oder verlinken"],["period","Zeitraum","Semester, Ferien, Prüfungsphase"]];
+  const opts = [["task","Aufgabe / Auftrag","Uni-Auftrag, Vorbereitung, Korrektur"],["event","Termin / Lektion","Einmalig oder wöchentlich"],["exam","Prüfung","Mit Erinnerung und Checkliste"],["topic","Themenblock","Zeitraum mit Thema, sammelt Dokumente"],["note","Notiz (Brain Dump)","Schnell notieren, später zuordnen"],["ctx","Klasse / Kurs","KBS-Klasse oder Uni-Veranstaltung"],["student","Schüler:in","Zu einer Klasse"],["doc","Dokument / Link","Datei hochladen oder verlinken"],["period","Zeitraum","Semester, Ferien, Prüfungsphase"],["book","Buch","Für die Leseliste (Privat)"],["wish","Wunsch","Für die Wunschliste (Privat)"],["habit","Gewohnheit","Für den Habit Tracker (Privat)"]];
   root.innerHTML = `<div class="ov"><div class="modal"><div class="head"><h2>Neu erfassen</h2><button type="button" class="btn ghost" id="nclose" aria-label="Schliessen">✕</button></div>
   <div class="list">${opts.map(([k,l,s]) => `<div class="li clickable" data-k="${k}" tabindex="0" style="grid-template-columns:1fr auto"><div><div class="t">${l}</div><div class="m">${s}</div></div><span>›</span></div>`).join("")}</div></div></div>`;
   $("#nclose").onclick = () => root.innerHTML = "";
@@ -791,7 +811,64 @@ function itemRow(x, evId, day){
   if(x.movedTo) return `<div class="lrow moved"><span class="ib">↷</span><span class="t">${esc(x.text)}</span><span class="chip neutral">→ ${fmtD(x.movedTo)}</span></div>`;
   return `<label class="lrow ${x.done ? "done" : ""}"><input type="checkbox" data-item="${evId}|${day}|${x.id}" ${x.done ? "checked" : ""}><span class="t">${esc(x.text)}</span>${x.from ? `<span class="chip neutral">aus ${fmtD(x.from)}</span>` : ""}</label>`;
 }
+/* ---------- Termine ausserhalb der KBS (Uni / Privat): To-dos + Notizen ---------- */
+function simpleCard(o, tasks){
+  const time = o.ev.start ? `${o.ev.start}${o.ev.end ? "–" + o.ev.end : ""}` : "";
+  const open = tasks.filter(t => !t.done).length;
+  const notes = String(o.plan.notes || "").trim();
+  return `<div class="lesson tone ${o.cancelled ? "cancel" : ""}"${tAttr(o.ev)}>
+    <div class="lh">${time ? `<span class="tm">${time}</span>` : ""}<b>${esc(o.ev.title)}</b>${o.ev.location ? `<span class="lm">${esc(o.ev.location)}</span>` : ""}${o.cancelled ? `<span class="chip neutral">fällt aus</span>` : open ? `<span class="chip warn">${open} To-do${open > 1 ? "s" : ""} offen</span>` : ""}
+      <span style="flex:1"></span><button type="button" class="btn small" data-occ="${o.ev.id}|${o.day}">Bearbeiten</button></div>
+    ${tasks.length ? `<div class="lsec"><div class="section-h">To-dos vor dem Termin</div>${tasks.map(t => `<label class="lrow ${t.done ? "done" : ""}"><input type="checkbox" data-done="${t.id}" ${t.done ? "checked" : ""}><span class="t">${esc(t.title)}</span>${t.due && t.due !== o.day ? dueChip(t.due, t.done) : ""}</label>`).join("")}</div>` : ""}
+    ${notes ? `<div class="lsec"><div class="section-h">Notizen</div><div class="lnotes">${esc(notes)}</div></div>` : ""}
+    ${o.plan.url ? `<div><a class="btn small" href="${esc(o.plan.url)}" target="_blank" rel="noopener">Link öffnen</a></div>` : ""}
+  </div>`;
+}
+function openSimple(occ){
+  S.modal = null;
+  const ev = get(occ.ev.id) || occ.ev, day = occ.day, c = ctxOf(ev);
+  const plan = { ...((ev.plans || {})[day] || {}) };
+  const root = $("#modalRoot");
+  root.innerHTML = `<div class="ov"><form class="modal" id="sform" style="width:min(600px,100%)">
+    <div class="head"><div><h2>${esc(ev.title)}</h2><div class="sub" style="color:var(--muted);font-size:.9rem">${fmtDL(day)}${ev.start ? ` · ${ev.start}${ev.end ? "–"+ev.end : ""}` : ""}${c ? ` · ${esc(c.name)}` : ""}</div></div><button type="button" class="btn ghost" id="sclose" aria-label="Schliessen">✕</button></div>
+    ${c ? `<section class="psec prep"><h3>To-dos vor dem Termin</h3><div id="sTodos"></div>
+      <div class="row"><input class="inp" id="st-new" placeholder="z. B. Unterlagen ausdrucken, Fragen notieren" style="flex:1"><button type="button" class="btn" id="st-add">+ To-do</button></div></section>` : ""}
+    <div class="form">
+      <label class="full">Notizen<textarea id="s-notes" name="notes" style="min-height:120px" placeholder="Was du dir zu diesem Termin merken willst">${esc(String(plan.notes || (Array.isArray(plan.items) ? plan.items.map(x => x.text).join("\n") : "")))}</textarea></label>
+      <label class="full">Link (optional)<input id="s-url" name="url" type="url" value="${esc(plan.url)}"></label>
+      <label class="cb full"><input type="checkbox" id="s-cancel" name="cancelled" ${plan.cancelled ? "checked" : ""}> Fällt aus</label>
+    </div>
+    <div class="foot"><button type="button" class="btn" id="sedit">Ganze Serie bearbeiten</button><div class="row"><button type="button" class="btn" id="scancel">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div>
+  </form></div>`;
+  const form = $("#sform");
+  const close = () => { root.innerHTML = ""; S.modal = null; const r = S.returnTo; S.returnTo = null; if(r) r(); };
+  $("#sclose").onclick = close; $("#scancel").onclick = close;
+  $(".ov").addEventListener("mousedown", e => { if(e.target.classList.contains("ov")) close(); });
+  const savePlan = async () => {
+    const cur = get(ev.id) || ev; const plans = { ...(cur.plans || {}) };
+    const p = { notes: form.elements.notes.value.trim(), url: form.elements.url.value.trim(), cancelled: form.elements.cancelled.checked };
+    if(!p.notes && !p.url && !p.cancelled) delete plans[day]; else plans[day] = p;
+    await save({ ...cur, plans });
+  };
+  $("#sedit").onclick = async () => { await savePlan(); root.innerHTML = ""; openForm("event", get(ev.id)); };
+  if(c){
+    const todos = () => all("task").filter(t => t.ctx === c.id && (t.day === day || (!t.day && t.due === day))).sort((a,b) => a.done - b.done || (a.created||0) - (b.created||0));
+    const render = () => {
+      const ts = todos();
+      $("#sTodos").innerHTML = ts.length ? ts.map(t => `<label class="lrow ${t.done ? "done" : ""}"><input type="checkbox" data-sdone="${t.id}" ${t.done ? "checked" : ""}><span class="t">${esc(t.title)}</span></label>`).join("") : `<div class="empty" style="font-size:.85rem">Keine To-dos. Nur ausfüllen, wenn vor dem Termin etwas zu erledigen ist.</div>`;
+      $("#sTodos").querySelectorAll("[data-sdone]").forEach(cb => cb.onchange = async () => { const t = get(cb.dataset.sdone); if(t){ await save({ ...t, done: cb.checked, doneAt: cb.checked ? TODAY() : "" }); render(); } });
+    };
+    const add = async () => { const inp = $("#st-new"); const t = inp.value.trim(); if(!t) return; inp.value = ""; await save({ id: uid(), kind: "task", created: Date.now(), title: t, ctx: c.id, day, due: "", prio: "normal", remind: "1", done: false }); render(); inp.focus(); };
+    $("#st-add").onclick = add;
+    $("#st-new").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); add(); } };
+    render();
+  }
+  form.onsubmit = async e => { e.preventDefault(); await savePlan(); close(); };
+  setTimeout(() => $("#st-new")?.focus() || $("#s-notes")?.focus(), 30);
+}
+
 function lessonCard(o, docs, tasks){
+  if(areaOf(o.ev) !== "kbs") return simpleCard(o, tasks);
   const c = ctxOf(o.ev), st = lessonStatus(o, docs, tasks);
   const time = o.ev.start ? `${o.ev.start}${o.ev.end ? "–" + o.ev.end : ""}` : "";
   const items = planItems(o.plan), live = items.filter(x => !x.movedTo), doneN = live.filter(x => x.done).length;
@@ -819,6 +896,7 @@ function lessonCard(o, docs, tasks){
   </div>`;
 }
 function openLesson(occ){
+  if(areaOf(occ.ev) !== "kbs") return openSimple(occ);
   S.modal = null;
   const ev = get(occ.ev.id) || occ.ev, day = occ.day, c = ctxOf(ev);
   const plan = { ...((ev.plans || {})[day] || {}) };
@@ -989,44 +1067,46 @@ function nextOccsOf(cid, n = 2){
 async function assignNote(n, cid, day, as){
   const c = get(cid); if(!c) return;
   const [first, ...rest] = n.text.split(/\r?\n/);
-  if(as === "task"){
-    await save({ id: uid(), kind: "task", created: Date.now(), title: first.slice(0, 160), notes: rest.join("\n").trim(), ctx: cid, day, due: "", prio: "normal", remind: "1", done: false });
-    await remove(n.id);
-  } else if(as === "step" && day){
+  const mkTask = extra => ({ id: uid(), kind: "task", created: Date.now(), title: first.slice(0, 160), notes: rest.join("\n").trim(), ctx: cid, day: "", due: "", prio: "normal", remind: "1", done: false, ...extra });
+  if(as === "task"){ await save(mkTask({ due: day || "" })); await remove(n.id); }
+  else if(as === "prep"){ await save(mkTask({ day })); await remove(n.id); }
+  else if(as === "step"){
     const o = occurrences(day, day, true).find(x => x.ev.ctx === cid);
-    if(!o){ await save({ ...n, ctx: cid, day }); toast(`An diesem Tag gibt es keine Lektion. Als Notiz abgelegt.`); return; }
+    if(!o){ toast("An diesem Tag gibt es keine Lektion. Wähle einen anderen Tag."); return; }
     const ev = get(o.ev.id); const plans = { ...(ev.plans || {}) }; const p = { ...(plans[day] || {}) };
     p.items = [...planItems(p), ...n.text.split(/\r?\n/).map(t => t.trim()).filter(Boolean).map(t => ({ id: uid(), text: t, done: false }))]; delete p.notes; p.ready = false; plans[day] = p;
     await save({ ...ev, plans }); await remove(n.id);
-  } else {
-    await save({ ...n, ctx: cid, day: day || "" });
-  }
+  } else { await save({ ...n, ctx: cid, day: "" }); }
   delete S.noteSel[n.id]; delete S.noteAs[n.id];
-  const what = as === "task" ? "Als Vorbereitung" : as === "step" ? "Als Ablauf-Schritt" : day ? "Als Notiz" : "Als Idee";
-  toast(`${what} bei ${c.short || c.name}${day ? " am " + fmtD(day) : ""} abgelegt`);
+  const kbs = c.area === "kbs";
+  const what = { idea: "Als Idee", task: "Als Aufgabe", prep: kbs ? "Als Vorbereitung" : "Als To-do", step: "Als Ablauf-Schritt" }[as] || "";
+  toast(`${what} bei ${c.short || c.name}${day ? (as === "task" ? ", fällig " : " am ") + fmtD(day) : ""} abgelegt`);
 }
 function dumpNote(n){
   const cid = S.noteSel[n.id] || "", c = cid ? get(cid) : null;
-  const as = S.noteAs[n.id] || "note";
-  const nx = c ? nextOccsOf(cid, 2) : [];
-  const word = c?.area === "kbs" ? "Lektion" : "Termin";
+  const kbs = c?.area === "kbs";
+  const opts = c ? [["task","als Aufgabe"],["idea","als Idee"],["prep", kbs ? "als Vorbereitung einer Lektion" : "als To-do vor einem Termin"], ...(kbs ? [["step","als Schritt im Ablauf einer Lektion"]] : [])] : [];
+  let as = S.noteAs[n.id] || "task"; if(!opts.some(([k]) => k === as)) as = "task";
+  const nx = c && (as === "prep" || as === "step") ? nextOccsOf(cid, 2) : [];
+  const word = kbs ? "Lektion" : "Termin";
+  const actions = !c ? "" : as === "idea"
+    ? `<button type="button" class="btn small primary" data-dgo="${n.id}|">Bei ${esc(c.short || c.name)} ablegen</button><span class="hint2">landet bei «Ideen & Notizen»</span>`
+    : as === "task"
+    ? `<button type="button" class="btn small primary" data-dgo="${n.id}|">Ohne Datum ablegen</button><label class="row" style="gap:4px;font-size:.8rem;color:var(--muted)">oder fällig am <input type="date" class="inp sm" data-ddate="${n.id}"></label>`
+    : `${nx[0] ? `<button type="button" class="btn small primary" data-dgo="${n.id}|${nx[0].day}">Nächste ${word} · ${fmtD(nx[0].day)}</button>` : `<span class="hint2">Keine kommende ${word} gefunden.</span>`}${nx[1] ? `<button type="button" class="btn small" data-dgo="${n.id}|${nx[1].day}">Übernächste · ${fmtD(nx[1].day)}</button>` : ""}<label class="row" style="gap:4px;font-size:.8rem;color:var(--muted)">oder am <input type="date" class="inp sm" data-ddate="${n.id}"></label>`;
   return `<div class="dnote">
     <div class="txt">${esc(n.text)}</div>
     <div class="row" style="gap:6px">
       <select class="inp sm" data-dsel="${n.id}" aria-label="Klasse oder Kurs">${ctxOptions().map(([a,b]) => `<option value="${esc(a)}" ${cid === a ? "selected" : ""}>${esc(a ? b : "Zuordnen zu …")}</option>`).join("")}</select>
-      ${c ? `<select class="inp sm" data-das="${n.id}" aria-label="Ablegen als"><option value="note" ${as === "note" ? "selected" : ""}>als Notiz</option><option value="task" ${as === "task" ? "selected" : ""}>als Vorbereitung (Aufgabe)</option><option value="step" ${as === "step" ? "selected" : ""}>als Schritt im Ablauf</option></select>` : ""}
+      ${c ? `<select class="inp sm" data-das="${n.id}" aria-label="Ablegen als">${opts.map(([k,l]) => `<option value="${k}" ${as === k ? "selected" : ""}>${l}</option>`).join("")}</select>` : ""}
       <span style="flex:1"></span>
-      ${!c ? `<button type="button" class="btn small" data-ntask="${n.id}">→ Aufgabe</button>` : ""}
+      ${!c ? `<button type="button" class="btn small" data-ntask="${n.id}">→ Aufgabe ohne Zuordnung</button>` : ""}
       <button type="button" class="btn small ghost" data-ndel="${n.id}">Löschen</button>
     </div>
-    ${c ? `<div class="row" style="gap:6px">
-      ${nx[0] ? `<button type="button" class="btn small primary" data-dgo="${n.id}|${nx[0].day}">Nächste ${word} · ${fmtD(nx[0].day)}</button>` : ""}
-      ${nx[1] ? `<button type="button" class="btn small" data-dgo="${n.id}|${nx[1].day}">Übernächste · ${fmtD(nx[1].day)}</button>` : ""}
-      <label class="row" style="gap:4px;font-size:.8rem;color:var(--muted)">am <input type="date" class="inp sm" data-ddate="${n.id}"></label>
-      ${as !== "step" ? `<button type="button" class="btn small" data-dgo="${n.id}|">${as === "task" ? "ohne Datum" : "als Idee (ohne Datum)"}</button>` : ""}
-    </div>` : ""}
+    ${c ? `<div class="row" style="gap:6px">${actions}</div>` : ""}
   </div>`;
 }
+
 function dumpCard(){
   const open = all("note").filter(n => !n.ctx).sort((a,b) => (b.created||0) - (a.created||0));
   return `<div class="card dumpcard" style="margin-bottom:16px"><h2>Brain Dump <span class="count">${open.length ? open.length + " noch zuzuordnen" : ""}</span></h2>
@@ -1034,11 +1114,72 @@ function dumpCard(){
     ${open.length ? `<div class="grid" style="gap:8px;margin-top:12px">${open.map(dumpNote).join("")}</div>` : ""}
   </div>`;
 }
+/* ---------- Privat-Übersicht: Ideen, Habits, Bücher, Wunschliste ---------- */
+const stars = (b, edit = true) => [1,2,3,4,5].map(n => edit ? `<button type="button" class="star ${n <= (Number(b.stars)||0) ? "on" : ""}" data-star="${b.id}|${n}" aria-label="${n} Sterne">★</button>` : `<span class="star ${n <= (Number(b.stars)||0) ? "on" : ""}">★</span>`).join("");
+function habitStreak(h){
+  const log = h.log || {}; let d = new Date(); if(!log[ds(d)]) d = addDays(d, -1);
+  let n = 0; while(log[ds(d)]){ n++; d = addDays(d, -1); } return n;
+}
+function privatSections(){
+  const today = TODAY(), mon = monday(new Date());
+  const privIds = new Set(all("ctx").filter(c => c.area === "privat").map(c => c.id));
+  const ideas = all("note").filter(n => privIds.has(n.ctx) && !n.day).sort((a,b) => (b.created||0) - (a.created||0));
+  const habits = all("habit").sort((a,b) => (a.created||0) - (b.created||0));
+  const books = all("book");
+  const read = books.filter(b => b.status === "read").sort((a,b) => (b.finished||"").localeCompare(a.finished||"") || (b.created||0) - (a.created||0));
+  const want = books.filter(b => b.status !== "read").sort((a,b) => (a.created||0) - (b.created||0));
+  const wishes = all("wish").sort((a,b) => (a.done - b.done) || (b.created||0) - (a.created||0));
+  const yr = String(new Date().getFullYear());
+  const pagesYear = read.filter(b => (b.finished || "").startsWith(yr)).reduce((s, b) => s + (Number(b.pages) || 0), 0);
+  const days = [...Array(7)].map((_, i) => addDays(mon, i));
+  const quick = (id, ph, btn) => `<form class="row pquick" data-pq="${id}"><input class="inp" name="t" placeholder="${ph}" style="flex:1;min-width:160px"><button class="btn" type="submit">${btn}</button></form>`;
+  return `<div class="grid g2" style="margin-top:16px">
+    <div class="card"><h2>Ideen <span class="count">${ideas.length}</span></h2>
+      ${quick("idea", "Neue private Idee", "+ Idee")}
+      ${ideas.length ? `<div class="list" style="margin-top:8px">${ideas.map(n => `<div class="li" style="grid-template-columns:1fr auto"><div class="txt" style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(n.text)}</div><div class="row"><button type="button" class="btn small" data-ntask="${n.id}">→ Aufgabe</button><button type="button" class="btn small ghost" data-ndel="${n.id}">Löschen</button></div></div>`).join("")}</div>` : `<div class="empty">Ideen aus dem Brain Dump, die du «Privat» als Idee zuordnest, landen hier.</div>`}
+    </div>
+    <div class="card"><h2>Habit Tracker <span class="count">KW ${isoWeek(mon)}</span></h2>
+      ${habits.length ? `<div class="tblwrap"><table class="habits"><thead><tr><th></th>${days.map(d => `<th class="${ds(d) === today ? "td" : ""}">${WD[d.getDay()]}<br><span>${d.getDate()}.</span></th>`).join("")}<th title="Tage in Folge">🔥</th></tr></thead><tbody>
+        ${habits.map(h => `<tr><td><button type="button" class="linkbtn" data-edit="${h.id}">${esc(h.name)}</button></td>${days.map(d => { const s = ds(d); const on = !!(h.log || {})[s]; return `<td><button type="button" class="hcell ${on ? "on" : ""} ${s > today ? "fut" : ""}" data-hab="${h.id}|${s}" aria-label="${esc(h.name)} ${fmtD(s)}" ${s > today ? "disabled" : ""}>${on ? "✓" : ""}</button></td>`; }).join("")}<td class="streak">${habitStreak(h)}</td></tr>`).join("")}
+      </tbody></table></div>` : `<div class="empty">Noch keine Gewohnheiten. Zum Beispiel «Lesen», «Sport», «Wasser trinken».</div>`}
+      ${quick("habit", "Neue Gewohnheit", "+ Gewohnheit")}
+    </div>
+    <div class="card"><h2>Gelesen <span class="count">${read.length} ${read.length === 1 ? "Buch" : "Bücher"}${pagesYear ? ` · ${pagesYear.toLocaleString("de-CH")} Seiten ${yr}` : ""}</span></h2>
+      ${read.length ? `<div class="list">${read.map(b => `<div class="li" style="grid-template-columns:1fr auto"><div><div class="t clickable" data-edit="${b.id}">${esc(b.title)}${b.author ? ` <span style="color:var(--muted);font-weight:400">· ${esc(b.author)}</span>` : ""}</div>
+        <div class="m"><span class="stars">${stars(b)}</span>${b.pages ? `<span>${esc(b.pages)} Seiten</span>` : ""}${b.finished ? `<span>${fmtD(b.finished)} ${pd(b.finished).getFullYear()}</span>` : ""}</div>${b.note ? `<div class="dcom" style="margin-top:2px">${esc(b.note)}</div>` : ""}</div></div>`).join("")}</div>` : `<div class="empty">Noch keine gelesenen Bücher eingetragen.</div>`}
+      <button type="button" class="btn small" data-newbook="read" style="margin-top:8px">+ Gelesenes Buch</button>
+    </div>
+    <div class="card"><h2>Möchte ich lesen <span class="count">${want.length}</span></h2>
+      ${quick("book", "Titel (und Autor:in)", "+ Buch")}
+      ${want.length ? `<div class="list" style="margin-top:8px">${want.map(b => `<div class="li" style="grid-template-columns:1fr auto"><div><div class="t clickable" data-edit="${b.id}">${esc(b.title)}${b.author ? ` <span style="color:var(--muted);font-weight:400">· ${esc(b.author)}</span>` : ""}</div>${b.note ? `<div class="dcom">${esc(b.note)}</div>` : ""}</div><button type="button" class="btn small" data-bookread="${b.id}">✓ Gelesen</button></div>`).join("")}</div>` : ""}
+    </div>
+    <div class="card" style="grid-column:1/-1"><h2>Wunschliste <span class="count">${wishes.filter(w => !w.done).length} offen</span></h2>
+      ${quick("wish", "Was wünschst du dir?", "+ Wunsch")}
+      ${wishes.length ? `<div class="list" style="margin-top:8px">${wishes.map(w => `<div class="li ${w.done ? "done" : ""}"><input type="checkbox" data-wish="${w.id}" ${w.done ? "checked" : ""} aria-label="Erfüllt"><div class="clickable" data-edit="${w.id}"><div class="t">${esc(w.title)}</div><div class="m">${w.price ? `<span>${esc(w.price)}</span>` : ""}${w.note ? `<span class="dcom">${esc(w.note)}</span>` : ""}</div></div>${w.url ? `<a class="btn small" href="${esc(w.url)}" target="_blank" rel="noopener">Link</a>` : "<span></span>"}</div>`).join("")}</div>` : ""}
+    </div>
+  </div>`;
+}
+function bindPrivat(m){
+  m.querySelectorAll("[data-pq]").forEach(f => f.onsubmit = async e => {
+    e.preventDefault(); const t = f.elements.t.value.trim(); if(!t) return; f.reset();
+    const k = f.dataset.pq, base = { id: uid(), created: Date.now() };
+    if(k === "idea") await save({ ...base, kind: "note", text: t, ctx: "ctx-privat", day: "" });
+    if(k === "habit") await save({ ...base, kind: "habit", name: t, log: {} });
+    if(k === "wish") await save({ ...base, kind: "wish", title: t, done: false });
+    if(k === "book"){ const [title, ...au] = t.split(/\s+[-–·]\s+|,\s*/); await save({ ...base, kind: "book", title: title.trim(), author: au.join(", ").trim(), status: "want" }); }
+  });
+  m.querySelectorAll("[data-hab]").forEach(b => b.onclick = () => { const [id, d] = b.dataset.hab.split("|"); const h = get(id); if(!h) return; const log = { ...(h.log || {}) }; if(log[d]) delete log[d]; else log[d] = true; save({ ...h, log }); });
+  m.querySelectorAll("[data-star]").forEach(b => b.onclick = e => { e.stopPropagation(); const [id, n] = b.dataset.star.split("|"); const bk = get(id); if(bk) save({ ...bk, stars: String(Number(bk.stars) === Number(n) ? 0 : n) }); });
+  m.querySelectorAll("[data-bookread]").forEach(b => b.onclick = () => { const bk = get(b.dataset.bookread); if(bk) openForm("book", { ...bk, status: "read", finished: TODAY() }); });
+  m.querySelectorAll("[data-newbook]").forEach(b => b.onclick = () => openForm("book", { status: "read", finished: TODAY() }));
+  m.querySelectorAll("[data-wish]").forEach(cb => cb.onchange = () => { const w = get(cb.dataset.wish); if(w) save({ ...w, done: cb.checked }); });
+}
+
 function bindDump(m){
   m.querySelectorAll("[data-dsel]").forEach(sel => sel.onchange = () => { S.noteSel[sel.dataset.dsel] = sel.value; renderAll(); });
   m.querySelectorAll("[data-das]").forEach(sel => sel.onchange = () => { S.noteAs[sel.dataset.das] = sel.value; renderAll(); });
-  m.querySelectorAll("[data-dgo]").forEach(b => b.onclick = () => { const [id, day] = b.dataset.dgo.split("|"); const n = get(id); if(n) assignNote(n, S.noteSel[id], day, S.noteAs[id] || "note"); });
-  m.querySelectorAll("[data-ddate]").forEach(inp => inp.onchange = () => { const n = get(inp.dataset.ddate); if(n && inp.value) assignNote(n, S.noteSel[n.id], inp.value, S.noteAs[n.id] || "note"); });
+  m.querySelectorAll("[data-dgo]").forEach(b => b.onclick = () => { const [id, day] = b.dataset.dgo.split("|"); const n = get(id); if(n) assignNote(n, S.noteSel[id], day, b.closest(".dnote").querySelector("[data-das]")?.value || "task"); });
+  m.querySelectorAll("[data-ddate]").forEach(inp => inp.onchange = () => { const n = get(inp.dataset.ddate); if(n && inp.value) assignNote(n, S.noteSel[n.id], inp.value, inp.closest(".dnote").querySelector("[data-das]")?.value || "task"); });
 }
 
 function vUebersicht(){
@@ -1065,7 +1206,8 @@ function vUebersicht(){
   </div>
   <div class="card" style="margin-top:16px"><h2>Diese Woche <a class="count" href="#kalender">zum Kalender</a></h2>
     <div class="week">${[...Array(7)].map((_, i) => { const d = addDays(mon, i), s = ds(d); const items = wk[s] || []; const bands = periodsOn(s).filter(p => p.type === "frei" || p.type === "pruef"); return `<div class="day ${s === today ? "today" : ""}"><div class="dh"><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b></div>${bands.map(p => `<div class="band ${p.type}" title="${esc(p.title)}">${esc(p.title)}</div>`).join("")}${items.map(agendaBlock).join("") || `<span class="empty" style="font-size:.78rem">–</span>`}</div>`; }).join("")}</div>
-  </div>`;
+  </div>` +
+  (S.area === "privat" ? privatSections() : "");
 }
 
 function vKalender(){
@@ -1502,6 +1644,7 @@ function bindView(){
   m.querySelectorAll("[data-act=new]").forEach(b => b.onclick = () => newForView(b.dataset.newkind));
   bindCommon(m, null);
   bindDump(m);
+  bindPrivat(m);
   m.querySelectorAll("[data-ctx]").forEach(el => { const go = () => location.hash = "klasse-" + el.dataset.ctx; el.onclick = go; el.onkeydown = e => { if(e.key === "Enter") go(); }; });
   m.querySelectorAll("[data-newk]").forEach(b => b.onclick = () => { const k = b.dataset.newk; k === "doc" ? openDocForm({}) : openForm(k, defaultsFor(k)); });
   m.querySelectorAll("[data-cal]").forEach(b => b.onclick = () => { S.calMode = b.dataset.cal; lsSet("planer.cal", S.calMode); renderAll(); });
